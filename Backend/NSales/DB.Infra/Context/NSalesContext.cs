@@ -33,6 +33,8 @@ public partial class NSalesContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
+            entity.Property(e => e.NetworkId).HasColumnName("network_id");
+            entity.Property(e => e.SellerId).HasColumnName("seller_id");
             entity.Property(e => e.Status)
                 .HasDefaultValue(1)
                 .HasColumnName("status");
@@ -77,11 +79,15 @@ public partial class NSalesContext : DbContext
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Frequency).HasColumnName("frequency");
+            entity.Property(e => e.Image)
+                .HasMaxLength(150)
+                .HasColumnName("image");
             entity.Property(e => e.Limit).HasColumnName("limit");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(120)
                 .HasColumnName("name");
+            entity.Property(e => e.NetworkId).HasColumnName("network_id");
             entity.Property(e => e.Price).HasColumnName("price");
             entity.Property(e => e.Slug)
                 .IsRequired()

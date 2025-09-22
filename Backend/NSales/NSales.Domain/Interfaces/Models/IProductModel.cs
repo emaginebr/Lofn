@@ -11,7 +11,8 @@ namespace NSales.Domain.Interfaces.Models
     public interface IProductModel
     {
         long ProductId { get; set; }
-        long NetworkId { get; set; }
+        long? NetworkId { get; set; }
+        long UserId { get; set; }
         string Slug { get; set; }
         string Image {  get; set; }
         string Name { get; set; }
@@ -26,8 +27,8 @@ namespace NSales.Domain.Interfaces.Models
         IEnumerable<IProductModel> Search(long? networkId, long? userId, string keyword, bool active, int pageNum, out int pageCount, IProductDomainFactory factory);
         IEnumerable<IProductModel> ListByNetwork(long networkId, IProductDomainFactory factory);
         IProductModel GetById(long id, IProductDomainFactory factory);
-        IProductModel GetByStripeProductId(string stripeProductId, IProductDomainFactory factory);
-        IProductModel GetByStripePriceId(string stripePriceId, IProductDomainFactory factory);
+        //IProductModel GetByStripeProductId(string stripeProductId, IProductDomainFactory factory);
+        //IProductModel GetByStripePriceId(string stripePriceId, IProductDomainFactory factory);
         IProductModel GetBySlug(string slug, IProductDomainFactory factory);
         IProductModel Insert(IProductDomainFactory factory);
         IProductModel Update(IProductDomainFactory factory);

@@ -134,10 +134,12 @@ namespace NSales.Domain.Impl.Services
             return _orderFactory.BuildOrderModel().List(networkId, userId, status, _orderFactory).ToList();
         }
 
+        /*
         public IOrderModel GetByStripeId(string stripeId)
         {
             return _orderFactory.BuildOrderModel().GetByStripeId(stripeId, _orderFactory);
         }
+        */
 
         public async Task<OrderListPagedResult> Search(long networkId, long? userId, long? sellerId, int pageNum)
         {

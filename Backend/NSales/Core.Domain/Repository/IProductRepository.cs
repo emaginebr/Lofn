@@ -12,8 +12,8 @@ namespace Core.Domain.Repository
         IEnumerable<TModel> ListByNetwork(long networkId, TFactory factory);
         TModel GetById(long id, TFactory factory);
         TModel GetBySlug(string slug, TFactory factory);
-        TModel GetByStripeProductId(string stripeProductId, TFactory factory);
-        TModel GetByStripePriceId(string stripePriceId, TFactory factory);
+        //TModel GetByStripeProductId(string stripeProductId, TFactory factory);
+        //TModel GetByStripePriceId(string stripePriceId, TFactory factory);
         TModel Insert(TModel model, TFactory factory);
         TModel Update(TModel model, TFactory factory);
         bool ExistSlug(long productId, string slug);

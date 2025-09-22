@@ -23,5 +23,9 @@ public partial class Product
 
     public string Description { get; set; }
 
+    public string Image { get; set; }
+
+    public long? NetworkId { get; set; }
+
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }

@@ -29,6 +29,7 @@ namespace DB.Infra.Repository
         {
             var md = factory.BuildProductModel();
             md.ProductId = row.ProductId;
+            md.UserId = row.UserId;
             md.NetworkId = row.NetworkId;
             md.Name = row.Name;
             md.Slug = row.Slug;
@@ -38,14 +39,15 @@ namespace DB.Infra.Repository
             md.Frequency = row.Frequency;
             md.Limit = row.Limit;
             md.Status = (ProductStatusEnum) row.Status;
-            md.StripeProductId = row.StripeProductId;
-            md.StripePriceId = row.StripePriceId;
+            //md.StripeProductId = row.StripeProductId;
+            //md.StripePriceId = row.StripePriceId;
             return md;
         }
 
         private void ModelToDb(IProductModel md, Product row)
         {
             row.ProductId = md.ProductId;
+            row.UserId = md.UserId;
             row.NetworkId = md.NetworkId;
             row.Name = md.Name;
             row.Slug = md.Slug;
@@ -55,8 +57,8 @@ namespace DB.Infra.Repository
             row.Frequency = md.Frequency;
             row.Limit = md.Limit;
             row.Status = (int)md.Status;
-            row.StripeProductId = md.StripeProductId;
-            row.StripePriceId = md.StripePriceId;
+            //row.StripeProductId = md.StripeProductId;
+            //row.StripePriceId = md.StripePriceId;
         }
 
         public IProductModel Insert(IProductModel model, IProductDomainFactory factory)
@@ -102,7 +104,8 @@ namespace DB.Infra.Repository
             }
             if (userId.HasValue && userId.Value > 0)
             {
-                q = q.Where(x => x.Network.UserNetworks.Where(y => y.UserId == userId.Value).Any());
+                //q = q.Where(x => x.Network.UserNetworks.Where(y => y.UserId == userId.Value).Any());
+                q = q.Where(x => x.UserId == userId.Value);
             }
             if (networkId.HasValue && networkId.Value > 0)
             {
@@ -135,9 +138,12 @@ namespace DB.Infra.Repository
             return _ccsContext.Products.Where(x => x.Slug == slug && (productId == 0 || x.ProductId != productId)).Any();
         }
 
+        /*
         public IProductModel GetByStripeProductId(string stripeProductId, IProductDomainFactory factory)
         {
-            var row = _ccsContext.Products.Where(x => x.StripeProductId == stripeProductId).FirstOrDefault();
+            var row = _ccsContext.Products
+                //.Where(x => x.StripeProductId == stripeProductId)
+                .FirstOrDefault();
             if (row == null)
                 return null;
             return DbToModel(factory, row);
@@ -145,10 +151,13 @@ namespace DB.Infra.Repository
 
         public IProductModel GetByStripePriceId(string stripePriceId, IProductDomainFactory factory)
         {
-            var row = _ccsContext.Products.Where(x => x.StripePriceId == stripePriceId).FirstOrDefault();
+            var row = _ccsContext.Products
+                //.Where(x => x.StripePriceId == stripePriceId)
+                .FirstOrDefault();
             if (row == null)
                 return null;
             return DbToModel(factory, row);
         }
+        */
     }
 }

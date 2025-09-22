@@ -14,7 +14,7 @@ namespace NSales.DTO.Order
         [JsonPropertyName("orderId")]
         public long OrderId { get; set; }
         [JsonPropertyName("networkId")]
-        public long NetworkId { get; set; }
+        public long? NetworkId { get; set; }
         [JsonPropertyName("userId")]
         public long UserId { get; set; }
         [JsonPropertyName("sellerId")]

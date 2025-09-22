@@ -23,7 +23,8 @@ namespace NSales.Domain.Impl.Models
         }
 
         public long ProductId { get; set; }
-        public long NetworkId { get; set; }
+        public long? NetworkId { get; set; }
+        public long UserId { get; set; }
         public string Slug { get; set; }
         public string Image { get; set; }
         public string Name { get; set; }
@@ -70,6 +71,7 @@ namespace NSales.Domain.Impl.Models
             return _repositoryProduct.ExistSlug(productId, slug);
         }
 
+        /*
         public IProductModel GetByStripeProductId(string stripeProductId, IProductDomainFactory factory)
         {
             return _repositoryProduct.GetByStripeProductId(stripeProductId, factory);
@@ -79,5 +81,6 @@ namespace NSales.Domain.Impl.Models
         {
             return _repositoryProduct.GetByStripeProductId(stripePriceId, factory);
         }
+        */
     }
 }

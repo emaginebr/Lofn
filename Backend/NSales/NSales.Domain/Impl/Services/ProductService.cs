@@ -36,7 +36,7 @@ namespace NSales.Domain.Impl.Services
             _productFactory = productFactory;
         }
 
-        private void ValidateAccess(long networkId, long userId)
+        private void ValidateAccess(long? networkId, long userId)
         {
             /*
             var networkAccess = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
@@ -121,6 +121,7 @@ namespace NSales.Domain.Impl.Services
 
             model.ProductId = product.ProductId;
             model.NetworkId = product.NetworkId;
+            model.UserId = userId;
             model.Name = product.Name;
             model.Description = product.Description;
             model.Price = product.Price;
@@ -192,6 +193,7 @@ namespace NSales.Domain.Impl.Services
                 .ToList();
         }
 
+        /*
         public IProductModel GetByStripeProductId(string stripeProductId)
         {
             return _productFactory.BuildProductModel().GetByStripeProductId(stripeProductId, _productFactory);
@@ -201,5 +203,6 @@ namespace NSales.Domain.Impl.Services
         {
             return _productFactory.BuildProductModel().GetByStripePriceId(stripePriceId, _productFactory);
         }
+        */
     }
 }

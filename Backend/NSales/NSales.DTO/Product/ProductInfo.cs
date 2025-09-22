@@ -12,7 +12,7 @@ namespace NSales.DTO.Product
         [JsonPropertyName("productId")]
         public long ProductId { get; set; }
         [JsonPropertyName("networkId")]
-        public long NetworkId { get; set; }
+        public long? NetworkId { get; set; }
         [JsonPropertyName("slug")]
         public string Slug { get; set; }
         [JsonPropertyName("image")]

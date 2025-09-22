@@ -11,7 +11,7 @@ namespace NSales.Domain.Interfaces.Models
     public interface IOrderModel
     {
         long OrderId { get; set; }
-        long NetworkId { get; set; }
+        long? NetworkId { get; set; }
         long UserId { get; set; }
         long? SellerId { get; set; }
         string StripeId { get; set; }
@@ -29,7 +29,7 @@ namespace NSales.Domain.Interfaces.Models
         IEnumerable<IOrderModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IOrderDomainFactory factory);
         IOrderModel GetById(long id, IOrderDomainFactory factory);
         IOrderModel Get(long productId, long userId, long? sellerId, OrderStatusEnum status, IOrderDomainFactory factory);
-        IOrderModel GetByStripeId(string stripeId, IOrderDomainFactory factory);
+        //IOrderModel GetByStripeId(string stripeId, IOrderDomainFactory factory);
         IOrderModel Insert(IOrderDomainFactory factory);
         IOrderModel Update(IOrderDomainFactory factory);
     }

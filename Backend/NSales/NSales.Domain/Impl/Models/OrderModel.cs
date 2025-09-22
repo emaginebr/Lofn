@@ -26,7 +26,7 @@ namespace NSales.Domain.Impl.Models
         }
 
         public long OrderId { get; set; }
-        public long NetworkId { get; set; }
+        public long? NetworkId { get; set; }
         public long UserId { get; set; }
         public long? SellerId { get; set; }
         public OrderStatusEnum Status { get; set; }
@@ -88,10 +88,12 @@ namespace NSales.Domain.Impl.Models
             return _repositoryOrder.Get(productId, userId, sellerId, (int)status, factory);
         }
 
+        /*
         public IOrderModel GetByStripeId(string stripeId, IOrderDomainFactory factory)
         {
             return _repositoryOrder.GetByStripeId(stripeId, factory);
         }
+        */
 
         public IEnumerable<IOrderModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IOrderDomainFactory factory)
         {
