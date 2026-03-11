@@ -1,11 +1,10 @@
-﻿using Core.Domain;
+using Core.Domain.Repository;
 using Microsoft.Extensions.Options;
-using NSales.Domain.Interfaces.Factory;
-using NSales.Domain.Interfaces.Models;
+using NSales.Domain.Impl.Models;
 using NSales.Domain.Interfaces.Services;
 using NSales.DTO.Product;
 using NSales.DTO.Settings;
-using NTools.ACL.Interfaces;
+using zTools.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,59 +17,32 @@ namespace NSales.Domain.Impl.Services
         private readonly IOptions<NSalesSetting> _nsalesSettings;
         private readonly IFileClient _fileClient;
         private readonly IStringClient _stringClient;
-        //private readonly IUserNetworkDomainFactory _userNetworkFactory;
-        private readonly IProductDomainFactory _productFactory;
+        private readonly IProductRepository<ProductModel> _productRepository;
 
         public ProductService(
             IOptions<NSalesSetting> nsalesSettings,
             IFileClient fileClient,
             IStringClient stringClient,
-            //IUserNetworkDomainFactory userNetworkFactory,
-            IProductDomainFactory productFactory
+            IProductRepository<ProductModel> productRepository
         )
         {
             _nsalesSettings = nsalesSettings;
             _fileClient = fileClient;
             _stringClient = stringClient;
-            //_userNetworkFactory = userNetworkFactory;
-            _productFactory = productFactory;
+            _productRepository = productRepository;
         }
 
-        private void ValidateAccess(long? networkId, long userId)
+        public async Task<ProductModel> GetByIdAsync(long productId)
         {
-            /*
-            var networkAccess = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
-
-            if (networkAccess == null)
-            {
-                throw new Exception("Your dont have access to this network");
-            }
-
-            if (networkAccess.Role != DTO.User.UserRoleEnum.NetworkManager)
-            {
-                var user = _userFactory.BuildUserModel().GetById(userId, _userFactory);
-                if (user == null)
-                {
-                    throw new Exception("User not found");
-                }
-                if (!user.IsAdmin)
-                {
-                    throw new Exception("Your dont have access to this network");
-                }
-            }
-            */
+            return await _productRepository.GetByIdAsync(productId);
         }
-        public IProductModel GetById(long productId)
+
+        public async Task<ProductModel> GetBySlugAsync(string productSlug)
         {
-            return _productFactory.BuildProductModel().GetById(productId, _productFactory);
+            return await _productRepository.GetBySlugAsync(productSlug);
         }
 
-        public IProductModel GetBySlug(string productSlug)
-        {
-            return _productFactory.BuildProductModel().GetBySlug(productSlug, _productFactory);
-        }
-
-        public async Task<ProductInfo> GetProductInfo(IProductModel md)
+        public async Task<ProductInfo> GetProductInfoAsync(ProductModel md)
         {
             return new ProductInfo
             {
@@ -88,26 +60,24 @@ namespace NSales.Domain.Impl.Services
             };
         }
 
-        private async Task<string> GenerateSlug(IProductModel md)
+        private async Task<string> GenerateSlugAsync(long productId, string slug, string name)
         {
             string newSlug;
             int c = 0;
             do
             {
-                newSlug = await _stringClient.GenerateSlugAsync((!string.IsNullOrEmpty(md.Slug)) ? md.Slug : md.Name);
+                newSlug = await _stringClient.GenerateSlugAsync(!string.IsNullOrEmpty(slug) ? slug : name);
                 if (c > 0)
                 {
                     newSlug += c.ToString();
                 }
                 c++;
-            } while (md.ExistSlug(md.ProductId, newSlug));
+            } while (await _productRepository.ExistSlugAsync(productId, newSlug));
             return newSlug;
         }
 
-        public async Task<IProductModel> Insert(ProductInfo product, long userId)
+        public async Task<ProductModel> InsertAsync(ProductInfo product, long userId)
         {
-            ValidateAccess(product.NetworkId, userId);
-
             if (string.IsNullOrEmpty(product.Name))
             {
                 throw new Exception("Name is empty");
@@ -117,26 +87,25 @@ namespace NSales.Domain.Impl.Services
                 throw new Exception("Price cant be 0");
             }
 
-            var model = _productFactory.BuildProductModel();
+            var model = new ProductModel
+            {
+                ProductId = product.ProductId,
+                NetworkId = product.NetworkId,
+                UserId = userId,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Frequency = product.Frequency,
+                Limit = product.Limit,
+                Status = product.Status,
+                Slug = await GenerateSlugAsync(product.ProductId, product.Slug, product.Name)
+            };
 
-            model.ProductId = product.ProductId;
-            model.NetworkId = product.NetworkId;
-            model.UserId = userId;
-            model.Name = product.Name;
-            model.Description = product.Description;
-            model.Price = product.Price;
-            model.Frequency = product.Frequency;
-            model.Limit = product.Limit;
-            model.Status = product.Status;
-            model.Slug = await GenerateSlug(model);
-
-            return model.Insert(_productFactory);
+            return await _productRepository.InsertAsync(model);
         }
 
-        public async Task<IProductModel> Update(ProductInfo product, long userId)
+        public async Task<ProductModel> UpdateAsync(ProductInfo product, long userId)
         {
-            ValidateAccess(product.NetworkId, userId);
-
             if (string.IsNullOrEmpty(product.Name))
             {
                 throw new Exception("Name is empty");
@@ -146,35 +115,39 @@ namespace NSales.Domain.Impl.Services
                 throw new Exception("Price cant be 0");
             }
 
-            var model = _productFactory.BuildProductModel();
+            var model = new ProductModel
+            {
+                ProductId = product.ProductId,
+                NetworkId = product.NetworkId,
+                Name = product.Name,
+                Image = product.Image,
+                Description = product.Description,
+                Price = product.Price,
+                Frequency = product.Frequency,
+                Limit = product.Limit,
+                Status = product.Status,
+                Slug = await GenerateSlugAsync(product.ProductId, product.Slug, product.Name)
+            };
 
-            model.ProductId = product.ProductId;
-            model.NetworkId = product.NetworkId;
-            model.Name = product.Name;
-            model.Image = product.Image;
-            model.Description = product.Description;
-            model.Price = product.Price;
-            model.Frequency = product.Frequency;
-            model.Limit = product.Limit;
-            model.Status = product.Status;
-            model.Slug = await GenerateSlug(model);
-
-            return model.Update(_productFactory);
+            return await _productRepository.UpdateAsync(model);
         }
 
-        public ProductListPagedResult Search(ProductSearchInternalParam param)
+        public async Task<ProductListPagedResult> SearchAsync(ProductSearchInternalParam param)
         {
-            var model = _productFactory.BuildProductModel();
-            int pageCount = 0;
-            var products = model.Search(
-                    param.NetworkId <= 0 ? null : param.NetworkId,
-                    param.UserId <= 0 ? null : param.UserId,
-                    param.Keyword,
-                    param.OnlyActive, param.PageNum,
-                    out pageCount, _productFactory
-                )
-                .Select(x => GetProductInfo(x).GetAwaiter().GetResult())
-                .ToList();
+            var (items, pageCount) = await _productRepository.SearchAsync(
+                param.NetworkId <= 0 ? null : param.NetworkId,
+                param.UserId <= 0 ? null : param.UserId,
+                param.Keyword,
+                param.OnlyActive,
+                param.PageNum
+            );
+
+            var products = new List<ProductInfo>();
+            foreach (var item in items)
+            {
+                products.Add(await GetProductInfoAsync(item));
+            }
+
             return new ProductListPagedResult
             {
                 Sucesso = true,
@@ -184,25 +157,10 @@ namespace NSales.Domain.Impl.Services
             };
         }
 
-        public IList<IProductModel> ListByNetwork(long networkId)
+        public async Task<IList<ProductModel>> ListByNetworkAsync(long networkId)
         {
-            return _productFactory
-                .BuildProductModel()
-                .ListByNetwork(networkId, _productFactory)
-                .OrderBy(x => x.Price)
-                .ToList();
+            var items = await _productRepository.ListByNetworkAsync(networkId);
+            return items.OrderBy(x => x.Price).ToList();
         }
-
-        /*
-        public IProductModel GetByStripeProductId(string stripeProductId)
-        {
-            return _productFactory.BuildProductModel().GetByStripeProductId(stripeProductId, _productFactory);
-        }
-
-        public IProductModel GetByStripePriceId(string stripePriceId)
-        {
-            return _productFactory.BuildProductModel().GetByStripePriceId(stripePriceId, _productFactory);
-        }
-        */
     }
 }

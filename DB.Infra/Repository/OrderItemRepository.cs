@@ -1,37 +1,34 @@
-﻿using Core.Domain.Repository;
+using Core.Domain.Repository;
 using DB.Infra.Context;
-using NSales.Domain.Interfaces.Factory;
-using NSales.Domain.Interfaces.Models;
-using NSales.DTO.Order;
-using NoobsMuc.Coinmarketcap.Client;
-using System;
+using NSales.Domain.Impl.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DB.Infra.Repository
 {
-    public class OrderItemRepository : IOrderItemRepository<IOrderItemModel, IOrderItemDomainFactory>
+    public class OrderItemRepository : IOrderItemRepository<OrderItemModel>
     {
-        private NSalesContext _ccsContext;
+        private readonly NSalesContext _context;
 
-        public OrderItemRepository(NSalesContext ccsContext)
+        public OrderItemRepository(NSalesContext context)
         {
-            _ccsContext = ccsContext;
+            _context = context;
         }
 
-        private IOrderItemModel DbToModel(IOrderItemDomainFactory factory, OrderItem row)
+        private static OrderItemModel DbToModel(OrderItem row)
         {
-            var md = factory.BuildOrderItemModel();
-            md.ItemId = row.ItemId;
-            md.OrderId = row.OrderId;
-            md.ProductId = row.ProductId;
-            md.Quantity = row.Quantity;
-            return md;
+            return new OrderItemModel
+            {
+                ItemId = row.ItemId,
+                OrderId = row.OrderId,
+                ProductId = row.ProductId,
+                Quantity = row.Quantity
+            };
         }
 
-        private void ModelToDb(IOrderItemModel md, OrderItem row)
+        private static void ModelToDb(OrderItemModel md, OrderItem row)
         {
             row.ItemId = md.ItemId;
             row.OrderId = md.OrderId;
@@ -39,22 +36,22 @@ namespace DB.Infra.Repository
             row.Quantity = md.Quantity;
         }
 
-        public IOrderItemModel Insert(IOrderItemModel model, IOrderItemDomainFactory factory)
+        public async Task<OrderItemModel> InsertAsync(OrderItemModel model)
         {
             var row = new OrderItem();
             ModelToDb(model, row);
-            _ccsContext.Add(row);
-            _ccsContext.SaveChanges();
+            _context.Add(row);
+            await _context.SaveChangesAsync();
             model.ItemId = row.ItemId;
             return model;
         }
 
-        public IEnumerable<IOrderItemModel> ListByOrder(long orderId, IOrderItemDomainFactory factory)
+        public async Task<IEnumerable<OrderItemModel>> ListByOrderAsync(long orderId)
         {
-            return _ccsContext.OrderItems
+            var rows = await _context.OrderItems
                 .Where(x => x.OrderId == orderId)
-                .ToList()
-                .Select(x => DbToModel(factory, x));
+                .ToListAsync();
+            return rows.Select(DbToModel);
         }
     }
 }

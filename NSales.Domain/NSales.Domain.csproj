@@ -13,6 +13,7 @@
     <PackageReference Include="Stripe.net" Version="48.5.0" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.8" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
+    <PackageReference Include="zTools" Version="0.3.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,19 +29,5 @@
     <None Remove="System.Drawing.Common" />
     <None Remove="SixLabors.ImageSharp" />
     <None Remove="Interfaces\Models\WithDraw\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="NAuth.ACL">
-      <HintPath>..\Lib\NAuth.ACL.dll</HintPath>
-    </Reference>
-    <Reference Include="NAuth.DTO">
-      <HintPath>..\Lib\NAuth.DTO.dll</HintPath>
-    </Reference>
-    <Reference Include="NTools.ACL">
-      <HintPath>..\Lib\NTools.ACL.dll</HintPath>
-    </Reference>
-    <Reference Include="NTools.DTO">
-      <HintPath>..\Lib\NTools.DTO.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

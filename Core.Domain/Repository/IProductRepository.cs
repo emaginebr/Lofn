@@ -1,21 +1,16 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.Domain.Repository
 {
-    public interface IProductRepository<TModel, TFactory>
+    public interface IProductRepository<TModel> where TModel : class
     {
-        IEnumerable<TModel> Search(long? networkId, long? userId, string keyword, bool active, int pageNum, out int pageCount, TFactory factory);
-        IEnumerable<TModel> ListByNetwork(long networkId, TFactory factory);
-        TModel GetById(long id, TFactory factory);
-        TModel GetBySlug(string slug, TFactory factory);
-        //TModel GetByStripeProductId(string stripeProductId, TFactory factory);
-        //TModel GetByStripePriceId(string stripePriceId, TFactory factory);
-        TModel Insert(TModel model, TFactory factory);
-        TModel Update(TModel model, TFactory factory);
-        bool ExistSlug(long productId, string slug);
+        Task<(IEnumerable<TModel> Items, int PageCount)> SearchAsync(long? networkId, long? userId, string keyword, bool active, int pageNum);
+        Task<IEnumerable<TModel>> ListByNetworkAsync(long networkId);
+        Task<TModel> GetByIdAsync(long id);
+        Task<TModel> GetBySlugAsync(string slug);
+        Task<TModel> InsertAsync(TModel model);
+        Task<TModel> UpdateAsync(TModel model);
+        Task<bool> ExistSlugAsync(long productId, string slug);
     }
 }

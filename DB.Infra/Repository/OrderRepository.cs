@@ -1,43 +1,40 @@
-﻿using Core.Domain.Repository;
+using Core.Domain.Repository;
 using DB.Infra.Context;
-using NSales.Domain.Interfaces.Factory;
-using NSales.Domain.Interfaces.Models;
+using NSales.Domain.Impl.Models;
 using NSales.DTO.Order;
-using NoobsMuc.Coinmarketcap.Client;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Printing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DB.Infra.Repository
 {
-    public class OrderRepository : IOrderRepository<IOrderModel, IOrderDomainFactory>
+    public class OrderRepository : IOrderRepository<OrderModel>
     {
         private const int PAGE_SIZE = 15;
+        private readonly NSalesContext _context;
 
-        private NSalesContext _ccsContext;
-
-        public OrderRepository(NSalesContext ccsContext)
+        public OrderRepository(NSalesContext context)
         {
-            _ccsContext = ccsContext;
+            _context = context;
         }
 
-        private IOrderModel DbToModel(IOrderDomainFactory factory, Order row)
+        private static OrderModel DbToModel(Order row)
         {
-            var md = factory.BuildOrderModel();
-            md.OrderId = row.OrderId;
-            md.NetworkId = row.NetworkId;
-            md.UserId = row.UserId;
-            md.SellerId = row.SellerId;
-            md.CreatedAt = row.CreatedAt;
-            md.UpdatedAt = row.UpdatedAt;
-            md.Status = (OrderStatusEnum) row.Status;
-            return md;
+            return new OrderModel
+            {
+                OrderId = row.OrderId,
+                NetworkId = row.NetworkId,
+                UserId = row.UserId,
+                SellerId = row.SellerId,
+                CreatedAt = row.CreatedAt,
+                UpdatedAt = row.UpdatedAt,
+                Status = (OrderStatusEnum)row.Status
+            };
         }
 
-        private void ModelToDb(IOrderModel md, Order row)
+        private static void ModelToDb(OrderModel md, Order row)
         {
             row.OrderId = md.OrderId;
             row.NetworkId = md.NetworkId;
@@ -46,12 +43,11 @@ namespace DB.Infra.Repository
             row.CreatedAt = md.CreatedAt;
             row.UpdatedAt = md.UpdatedAt;
             row.Status = (int)md.Status;
-            //row.StripeId = md.StripeId;
         }
 
-        public IEnumerable<IOrderModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IOrderDomainFactory factory)
+        public async Task<(IEnumerable<OrderModel> Items, int PageCount)> SearchAsync(long networkId, long? userId, long? sellerId, int pageNum)
         {
-            var q = _ccsContext.Orders.Where(x => x.NetworkId == networkId);
+            var q = _context.Orders.Where(x => x.NetworkId == networkId);
             if (userId.HasValue && userId.Value > 0)
             {
                 q = q.Where(x => x.UserId == userId.Value);
@@ -60,83 +56,77 @@ namespace DB.Infra.Repository
             {
                 q = q.Where(x => x.SellerId == sellerId.Value);
             }
-            var pages = (double)q.Count() / (double)PAGE_SIZE;
-            pageCount = Convert.ToInt32(Math.Ceiling(pages));
-            var rows = q.Skip((pageNum - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
-            return rows.Select(x => DbToModel(factory, x));
+            var totalCount = await q.CountAsync();
+            var pageCount = (int)Math.Ceiling((double)totalCount / PAGE_SIZE);
+            var rows = await q
+                .Skip((pageNum - 1) * PAGE_SIZE)
+                .Take(PAGE_SIZE)
+                .ToListAsync();
+            return (rows.Select(DbToModel), pageCount);
         }
 
-        public IOrderModel Insert(IOrderModel model, IOrderDomainFactory factory)
+        public async Task<OrderModel> InsertAsync(OrderModel model)
         {
             var row = new Order();
             ModelToDb(model, row);
             row.CreatedAt = DateTime.Now;
             row.UpdatedAt = DateTime.Now;
-            _ccsContext.Add(row);
-            _ccsContext.SaveChanges();
+            _context.Add(row);
+            await _context.SaveChangesAsync();
             model.OrderId = row.OrderId;
             return model;
         }
 
-        public IOrderModel Update(IOrderModel model, IOrderDomainFactory factory)
+        public async Task<OrderModel> UpdateAsync(OrderModel model)
         {
-            var row = _ccsContext.Orders.Find(model.OrderId);
+            var row = await _context.Orders.FindAsync(model.OrderId);
             ModelToDb(model, row);
             row.UpdatedAt = DateTime.Now;
-            _ccsContext.Orders.Update(row);
-            _ccsContext.SaveChanges();
+            _context.Orders.Update(row);
+            await _context.SaveChangesAsync();
             return model;
         }
 
-        public IEnumerable<IOrderModel> List(long networkId, long userId, int status, IOrderDomainFactory factory)
+        public async Task<IEnumerable<OrderModel>> ListAsync(long networkId, long userId, int status)
         {
-            var q = _ccsContext.Orders;
+            var q = _context.Orders.AsQueryable();
             if (networkId > 0)
             {
-                q.Where(x => x.NetworkId == networkId);
+                q = q.Where(x => x.NetworkId == networkId);
             }
-            if (userId > 0) {
-                q.Where(x => x.UserId == userId);
+            if (userId > 0)
+            {
+                q = q.Where(x => x.UserId == userId);
             }
-            if (status > 0) {
-                q.Where(x => x.Status == status);
+            if (status > 0)
+            {
+                q = q.Where(x => x.Status == status);
             }
-            return q.ToList().Select(x => DbToModel(factory, x));
+            var rows = await q.ToListAsync();
+            return rows.Select(DbToModel);
         }
 
-        public IOrderModel GetById(long id, IOrderDomainFactory factory)
+        public async Task<OrderModel> GetByIdAsync(long id)
         {
-            var row = _ccsContext.Orders.Find(id);
+            var row = await _context.Orders.FindAsync(id);
             if (row == null)
                 return null;
-            return DbToModel(factory, row);
+            return DbToModel(row);
         }
 
-        public IOrderModel Get(long productId, long userId, long? sellerId, int status, IOrderDomainFactory factory)
+        public async Task<OrderModel> GetAsync(long productId, long userId, long? sellerId, int status)
         {
-            var q = _ccsContext.Orders
-                .Where(x => x.OrderItems.Where(y => y.ProductId == productId).Any()
+            var q = _context.Orders
+                .Where(x => x.OrderItems.Any(y => y.ProductId == productId)
                     && x.UserId == userId && x.Status == status);
             if (sellerId.HasValue && sellerId.Value >= 0)
             {
                 q = q.Where(x => x.SellerId == sellerId.Value);
             }
-            var row = q.FirstOrDefault();
+            var row = await q.FirstOrDefaultAsync();
             if (row == null)
                 return null;
-            return DbToModel(factory, row);
+            return DbToModel(row);
         }
-
-        /*
-        public IOrderModel GetByStripeId(string stripeId, IOrderDomainFactory factory)
-        {
-            var row = _ccsContext.Orders
-                //.Where(x => x.StripeId == stripeId)
-                .FirstOrDefault();
-            if (row == null)
-                return null;
-            return DbToModel(factory, row);
-        }
-        */
     }
 }

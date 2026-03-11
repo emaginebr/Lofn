@@ -1,14 +1,11 @@
-﻿using NAuth.ACL;
-using NSales.Domain.Interfaces.Factory;
-using NSales.Domain.Interfaces.Models;
+using Core.Domain.Repository;
+using NAuth.ACL.Interfaces;
+using NSales.Domain.Impl.Models;
 using NSales.Domain.Interfaces.Services;
 using NSales.DTO.Order;
-using NSales.DTO.Product;
-using Stripe.Climate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace NSales.Domain.Impl.Services
@@ -16,27 +13,24 @@ namespace NSales.Domain.Impl.Services
     public class OrderService : IOrderService
     {
         private readonly IUserClient _userClient;
-        private readonly IOrderDomainFactory _orderFactory;
-        private readonly IOrderItemDomainFactory _itemFactory;
+        private readonly IOrderRepository<OrderModel> _orderRepository;
+        private readonly IOrderItemRepository<OrderItemModel> _orderItemRepository;
         private readonly IProductService _productService;
-        private readonly IProductDomainFactory _productFactory;
 
         public OrderService(
             IUserClient userClient,
-            IOrderDomainFactory orderFactory, 
-            IOrderItemDomainFactory itemFactory,
-            IProductService productService,
-            IProductDomainFactory productFactory
+            IOrderRepository<OrderModel> orderRepository,
+            IOrderItemRepository<OrderItemModel> orderItemRepository,
+            IProductService productService
         )
         {
             _userClient = userClient;
-            _orderFactory = orderFactory;
-            _itemFactory = itemFactory;
+            _orderRepository = orderRepository;
+            _orderItemRepository = orderItemRepository;
             _productService = productService;
-            _productFactory = productFactory;
         }
 
-        public IOrderModel Insert(OrderInfo order)
+        public async Task<OrderModel> InsertAsync(OrderInfo order)
         {
             if (!(order.NetworkId > 0))
             {
@@ -46,56 +40,60 @@ namespace NSales.Domain.Impl.Services
             {
                 throw new Exception("User is empty");
             }
-            if (order.Items == null || order.Items.Count() <= 0)
+            if (order.Items == null || !order.Items.Any())
             {
                 throw new Exception("Order is empty");
             }
 
-            var model = _orderFactory.BuildOrderModel();
-            model.NetworkId = order.NetworkId;
-            model.UserId = order.UserId;
-            model.SellerId = order.SellerId;
-            model.Status = order.Status;
+            var model = new OrderModel
+            {
+                NetworkId = order.NetworkId,
+                UserId = order.UserId,
+                SellerId = order.SellerId,
+                Status = order.Status
+            };
 
-            var newOrder = model.Insert(_orderFactory);
+            var newOrder = await _orderRepository.InsertAsync(model);
 
             foreach (var item in order.Items)
             {
-                var mdItem = _itemFactory.BuildOrderItemModel();
-                mdItem.OrderId = newOrder.OrderId;
-                mdItem.ProductId = item.ProductId;
-                mdItem.Quantity = item.Quantity;
-
-                mdItem.Insert(_itemFactory);
+                var mdItem = new OrderItemModel
+                {
+                    OrderId = newOrder.OrderId,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity
+                };
+                await _orderItemRepository.InsertAsync(mdItem);
             }
+
             return newOrder;
         }
 
-        public IOrderModel Update(OrderInfo order)
+        public async Task<OrderModel> UpdateAsync(OrderInfo order)
         {
             if (!(order.OrderId > 0))
             {
                 throw new Exception("Order ID is empty");
             }
-            var model = _orderFactory.BuildOrderModel().GetById(order.OrderId, _orderFactory);
 
+            var model = await _orderRepository.GetByIdAsync(order.OrderId);
             model.Status = order.Status;
-
-            return model.Update(_orderFactory);
+            return await _orderRepository.UpdateAsync(model);
         }
 
-        public IOrderModel GetById(long orderId)
+        public async Task<OrderModel> GetByIdAsync(long orderId)
         {
-            return _orderFactory.BuildOrderModel().GetById(orderId, _orderFactory);
+            return await _orderRepository.GetByIdAsync(orderId);
         }
 
-        public IOrderModel Get(long productId, long userId, long? sellerId, OrderStatusEnum status)
+        public async Task<OrderModel> GetAsync(long productId, long userId, long? sellerId, OrderStatusEnum status)
         {
-            return _orderFactory.BuildOrderModel().Get(productId, userId, sellerId, status, _orderFactory);
+            return await _orderRepository.GetAsync(productId, userId, sellerId, (int)status);
         }
 
-        public async Task<OrderInfo> GetOrderInfo(IOrderModel order)
+        public async Task<OrderInfo> GetOrderInfoAsync(OrderModel order, string token)
         {
+            var items = await _orderItemRepository.ListByOrderAsync(order.OrderId);
             return new OrderInfo
             {
                 OrderId = order.OrderId,
@@ -105,18 +103,19 @@ namespace NSales.Domain.Impl.Services
                 Status = order.Status,
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
-                User = await _userClient.GetByIdAsync(order.UserId),
-                Seller = order.SellerId.HasValue ? await _userClient.GetByIdAsync(order.SellerId.Value) : null,
-                Items = await GetOrderItemInfosAsync(order.ListItems(_itemFactory))
+                User = await _userClient.GetByIdAsync(order.UserId, token),
+                Seller = order.SellerId.HasValue ? await _userClient.GetByIdAsync(order.SellerId.Value, token) : null,
+                Items = await GetOrderItemInfosAsync(items.ToList())
             };
         }
 
-        private async Task<List<OrderItemInfo>> GetOrderItemInfosAsync(IList<IOrderItemModel> items)
+        private async Task<List<OrderItemInfo>> GetOrderItemInfosAsync(List<OrderItemModel> items)
         {
             var result = new List<OrderItemInfo>();
             foreach (var x in items)
             {
-                var product = await _productService.GetProductInfo(x.GetProduct(_productFactory));
+                var productModel = await _productService.GetByIdAsync(x.ProductId);
+                var product = productModel != null ? await _productService.GetProductInfoAsync(productModel) : null;
                 result.Add(new OrderItemInfo
                 {
                     ItemId = x.ItemId,
@@ -129,28 +128,24 @@ namespace NSales.Domain.Impl.Services
             return result;
         }
 
-        public IList<IOrderModel> List(long networkId, long userId, OrderStatusEnum? status)
+        public async Task<IList<OrderModel>> ListAsync(long networkId, long userId, OrderStatusEnum? status)
         {
-            return _orderFactory.BuildOrderModel().List(networkId, userId, status, _orderFactory).ToList();
+            var items = await _orderRepository.ListAsync(networkId, userId, status.HasValue ? (int)status : 0);
+            return items.ToList();
         }
 
-        /*
-        public IOrderModel GetByStripeId(string stripeId)
+        public async Task<OrderListPagedResult> SearchAsync(long networkId, long? userId, long? sellerId, int pageNum, string token)
         {
-            return _orderFactory.BuildOrderModel().GetByStripeId(stripeId, _orderFactory);
-        }
-        */
-
-        public async Task<OrderListPagedResult> Search(long networkId, long? userId, long? sellerId, int pageNum)
-        {
-            var model = _orderFactory.BuildOrderModel();
-            int pageCount = 0;
-            var orderModels = model.Search(networkId, userId, sellerId, pageNum, out pageCount, _orderFactory);
-            var orders = await Task.WhenAll(orderModels.Select(async x => await GetOrderInfo(x)));
+            var (items, pageCount) = await _orderRepository.SearchAsync(networkId, userId, sellerId, pageNum);
+            var orders = new List<OrderInfo>();
+            foreach (var item in items)
+            {
+                orders.Add(await GetOrderInfoAsync(item, token));
+            }
             return new OrderListPagedResult
             {
                 Sucesso = true,
-                Orders = orders.ToList(),
+                Orders = orders,
                 PageNum = pageNum,
                 PageCount = pageCount
             };

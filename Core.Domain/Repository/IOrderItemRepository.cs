@@ -1,14 +1,11 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.Domain.Repository
 {
-    public interface IOrderItemRepository<TModel, TFactory>
+    public interface IOrderItemRepository<TModel> where TModel : class
     {
-        IEnumerable<TModel> ListByOrder(long orderId, TFactory factory);
-        TModel Insert(TModel model, TFactory factory);
+        Task<IEnumerable<TModel>> ListByOrderAsync(long orderId);
+        Task<TModel> InsertAsync(TModel model);
     }
 }

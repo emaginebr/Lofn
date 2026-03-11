@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Https;
 using System.Security.Cryptography.X509Certificates;
 using NAuth.DTO.Settings;
 using NSales.DTO.Settings;
-using NTools.DTO.Settings;
+using zTools.DTO.Settings;
 
 namespace NSales.API
 {
@@ -38,7 +38,7 @@ namespace NSales.API
         {
             services.Configure<MailerSendSetting>(Configuration.GetSection("MailerSend"));
             services.Configure<NAuthSetting>(Configuration.GetSection("NAuth"));
-            services.Configure<NToolSetting>(Configuration.GetSection("NTools"));
+            services.Configure<zToolsetting>(Configuration.GetSection("zTools"));
             services.Configure<NSalesSetting>(Configuration.GetSection("NSales"));
 
             Initializer.Configure(services, Configuration.GetConnectionString("NSalesContext"));

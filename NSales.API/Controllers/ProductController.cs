@@ -1,31 +1,26 @@
-﻿using NSales.Domain.Impl.Services;
 using NSales.Domain.Interfaces.Services;
 using NSales.DTO.Product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NAuth.ACL.Interfaces;
 using System;
-using System.Linq;
-using NAuth.ACL;
 using System.Threading.Tasks;
 
 namespace NSales.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class ProductController: ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly IUserClient _userClient;
-        //private readonly INetworkService _networkService;
         private readonly IProductService _productService;
 
         public ProductController(
-            IUserClient userClient, 
-            //INetworkService networkService, 
+            IUserClient userClient,
             IProductService productService
         )
         {
             _userClient = userClient;
-            //_networkService = networkService;
             _productService = productService;
         }
 
@@ -40,10 +35,10 @@ namespace NSales.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newProfile = await _productService.Insert(product, userSession.UserId);
+                var newProduct = await _productService.InsertAsync(product, userSession.UserId);
                 return new ProductResult()
                 {
-                    Product = await _productService.GetProductInfo(newProfile)
+                    Product = await _productService.GetProductInfoAsync(newProduct)
                 };
             }
             catch (Exception ex)
@@ -63,10 +58,10 @@ namespace NSales.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newProduct = await _productService.Update(product, userSession.UserId);
+                var newProduct = await _productService.UpdateAsync(product, userSession.UserId);
                 return new ProductResult()
                 {
-                    Product = await _productService.GetProductInfo(newProduct)
+                    Product = await _productService.GetProductInfoAsync(newProduct)
                 };
             }
             catch (Exception ex)
@@ -80,16 +75,6 @@ namespace NSales.API.Controllers
         {
             try
             {
-                /*
-                if (!string.IsNullOrEmpty(param.NetworkSlug) && !(param.NetworkId.HasValue && param.NetworkId.Value > 0))
-                {
-                    var network = _networkService.GetBySlug(param.NetworkSlug);
-                    if (network != null)
-                    {
-                        param.NetworkId = network.NetworkId;
-                    }
-                }
-                */
                 if (!string.IsNullOrEmpty(param.UserSlug) && !(param.UserId.HasValue && param.UserId.Value > 0))
                 {
                     var user = await _userClient.GetBySlugAsync(param.UserSlug);
@@ -98,73 +83,13 @@ namespace NSales.API.Controllers
                         param.UserId = user.UserId;
                     }
                 }
-                return _productService.Search(param);
+                return await _productService.SearchAsync(param);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
         }
-
-        /*
-        [HttpGet("listByNetwork/{networkId}")]
-        public ActionResult<ProductListResult> ListByNetwork(long networkId)
-        {
-            try
-            {
-                var products = _productService
-                    .ListByNetwork(networkId)
-                    .Select(x => _productService.GetProductInfo(x))
-                    .ToList();
-
-                // Corrigir: aguardar todas as tasks antes de atribuir à lista de produtos
-                var productInfos = products.Select(task => task.Result).ToList();
-
-                return new ProductListResult
-                {
-                    Sucesso = true,
-                    Products = productInfos
-                };
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-        */
-
-        /*
-        [HttpGet("listByNetworkSlug/{networkSlug}")]
-        public ActionResult<ProductListResult> ListByNetworkSlug(string networkSlug)
-        {
-            try
-            {
-                var network = _networkService.GetBySlug(networkSlug);
-                if (network == null)
-                {
-                    throw new Exception("Network not found");
-                }
-
-                var products = _productService
-                    .ListByNetwork(network.NetworkId)
-                    .Select(x => _productService.GetProductInfo(x))
-                    .ToList();
-
-                // Corrigir: aguardar todas as tasks antes de atribuir à lista de produtos
-                var productInfos = products.Select(task => task.Result).ToList();
-
-                return new ProductListResult
-                {
-                    Sucesso = true,
-                    Products = productInfos
-                };
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-        */
 
         [Authorize]
         [HttpGet("getById/{productId}")]
@@ -177,10 +102,11 @@ namespace NSales.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
+                var product = await _productService.GetByIdAsync(productId);
                 return new ProductResult
                 {
                     Sucesso = true,
-                    Product = await _productService.GetProductInfo(_productService.GetById(productId))
+                    Product = await _productService.GetProductInfoAsync(product)
                 };
             }
             catch (Exception ex)
@@ -194,10 +120,11 @@ namespace NSales.API.Controllers
         {
             try
             {
+                var product = await _productService.GetBySlugAsync(productSlug);
                 return new ProductResult
                 {
                     Sucesso = true,
-                    Product = await _productService.GetProductInfo(_productService.GetBySlug(productSlug))
+                    Product = await _productService.GetProductInfoAsync(product)
                 };
             }
             catch (Exception ex)
@@ -205,6 +132,5 @@ namespace NSales.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
     }
 }
