@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "eKLjl/ctSYg=",
+  "dgSpecHash": "6FVIOYpL/cs=",
   "success": true,
   "projectFilePath": "C:\\repos\\NSales\\NSales.Application\\NSales.Application.csproj",
   "expectedPackageFiles": [
@@ -56,15 +56,12 @@
     "C:\\Users\\rodri\\.nuget\\packages\\microsoft.win32.primitives\\4.0.1\\microsoft.win32.primitives.4.0.1.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\microsoft.win32.registry\\4.5.0\\microsoft.win32.registry.4.5.0.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\microsoft.win32.systemevents\\9.0.8\\microsoft.win32.systemevents.9.0.8.nupkg.sha512",
-    "C:\\Users\\rodri\\.nuget\\packages\\nauth.acl\\0.2.3\\nauth.acl.0.2.3.nupkg.sha512",
-    "C:\\Users\\rodri\\.nuget\\packages\\nauth.dto\\0.2.3\\nauth.dto.0.2.3.nupkg.sha512",
+    "C:\\Users\\rodri\\.nuget\\packages\\nauth\\0.5.2\\nauth.0.5.2.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\netstandard.library\\1.6.0\\netstandard.library.1.6.0.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\noobsmuc.coinmarketcap.client\\3.1.1\\noobsmuc.coinmarketcap.client.3.1.1.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\npgsql\\9.0.3\\npgsql.9.0.3.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\9.0.4\\npgsql.entityframeworkcore.postgresql.9.0.4.nupkg.sha512",
-    "C:\\Users\\rodri\\.nuget\\packages\\ntools.acl\\0.2.0\\ntools.acl.0.2.0.nupkg.sha512",
-    "C:\\Users\\rodri\\.nuget\\packages\\ntools.dto\\0.2.0\\ntools.dto.0.2.0.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\runtime.native.system\\4.0.0\\runtime.native.system.4.0.0.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\runtime.native.system.io.compression\\4.1.0\\runtime.native.system.io.compression.4.1.0.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\runtime.native.system.net.http\\4.0.1\\runtime.native.system.net.http.4.0.1.nupkg.sha512",
@@ -141,7 +138,7 @@
     "C:\\Users\\rodri\\.nuget\\packages\\system.xml.xdocument\\4.0.11\\system.xml.xdocument.4.0.11.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\system.xml.xmldocument\\4.0.1\\system.xml.xmldocument.4.0.1.nupkg.sha512",
     "C:\\Users\\rodri\\.nuget\\packages\\system.xml.xmlserializer\\4.0.11\\system.xml.xmlserializer.4.0.11.nupkg.sha512",
-    "C:\\Users\\rodri\\.nuget\\packages\\ztools\\0.3.1\\ztools.0.3.1.nupkg.sha512"
+    "C:\\Users\\rodri\\.nuget\\packages\\ztools\\0.3.6\\ztools.0.3.6.nupkg.sha512"
   ],
   "logs": []
 }

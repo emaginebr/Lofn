@@ -3,7 +3,10 @@
     "allow": [
       "Bash(dotnet package:*)",
       "WebFetch(domain:www.nuget.org)",
-      "Bash(dotnet remove:*)"
+      "Bash(dotnet remove:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet build:*)"
     ]
   }
 }

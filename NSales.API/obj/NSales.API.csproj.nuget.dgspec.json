@@ -251,21 +251,13 @@
               "target": "Package",
               "version": "[1.22.1, )"
             },
-            "NAuth.ACL": {
+            "NAuth": {
               "target": "Package",
-              "version": "[0.2.3, )"
-            },
-            "NAuth.DTO": {
-              "target": "Package",
-              "version": "[0.2.3, )"
+              "version": "[0.5.2, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[9.0.4, )"
-            },
-            "zTools": {
-              "target": "Package",
-              "version": "[0.3.1, )"
             }
           },
           "imports": [
@@ -360,13 +352,9 @@
               "target": "Package",
               "version": "[9.0.8, )"
             },
-            "NAuth.ACL": {
+            "NAuth": {
               "target": "Package",
-              "version": "[0.2.3, )"
-            },
-            "zTools": {
-              "target": "Package",
-              "version": "[0.3.1, )"
+              "version": "[0.5.2, )"
             }
           },
           "imports": [
@@ -455,13 +443,9 @@
               "target": "Package",
               "version": "[9.0.8, )"
             },
-            "NAuth.ACL": {
+            "NAuth": {
               "target": "Package",
-              "version": "[0.2.3, )"
-            },
-            "NAuth.DTO": {
-              "target": "Package",
-              "version": "[0.2.3, )"
+              "version": "[0.5.2, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",
@@ -482,10 +466,6 @@
             "System.Drawing.Common": {
               "target": "Package",
               "version": "[9.0.8, )"
-            },
-            "zTools": {
-              "target": "Package",
-              "version": "[0.3.1, )"
             }
           },
           "imports": [
@@ -555,9 +535,9 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "NAuth.DTO": {
+            "NAuth": {
               "target": "Package",
-              "version": "[0.2.3, )"
+              "version": "[0.5.2, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",

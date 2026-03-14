@@ -522,28 +522,19 @@
           }
         }
       },
-      "NAuth.ACL/0.2.3": {
+      "NAuth/0.5.2": {
         "dependencies": {
           "Microsoft.AspNetCore.Authentication": "2.3.0",
-          "NAuth.DTO": "0.2.3",
-          "NTools.ACL": "0.2.0",
-          "System.IdentityModel.Tokens.Jwt": "8.15.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.8",
+          "Microsoft.Extensions.Http": "9.0.8",
+          "Newtonsoft.Json": "13.0.3",
+          "System.IdentityModel.Tokens.Jwt": "8.15.0",
+          "zTools": "0.3.6"
         },
         "runtime": {
-          "lib/net8.0/NAuth.ACL.dll": {
-            "assemblyVersion": "0.2.3.0",
-            "fileVersion": "0.2.3.0"
-          }
-        }
-      },
-      "NAuth.DTO/0.2.3": {
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.3"
-        },
-        "runtime": {
-          "lib/net8.0/NAuth.DTO.dll": {
-            "assemblyVersion": "0.2.3.0",
-            "fileVersion": "0.2.3.0"
+          "lib/net8.0/NAuth.dll": {
+            "assemblyVersion": "0.5.2.0",
+            "fileVersion": "0.5.2.0"
           }
         }
       },
@@ -645,29 +636,6 @@
           "lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll": {
             "assemblyVersion": "9.0.4.0",
             "fileVersion": "9.0.4.0"
-          }
-        }
-      },
-      "NTools.ACL/0.2.0": {
-        "dependencies": {
-          "Microsoft.AspNetCore.Authentication": "2.3.0",
-          "NTools.DTO": "0.2.0"
-        },
-        "runtime": {
-          "lib/net8.0/NTools.ACL.dll": {
-            "assemblyVersion": "0.2.0.0",
-            "fileVersion": "0.2.0.0"
-          }
-        }
-      },
-      "NTools.DTO/0.2.0": {
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.3"
-        },
-        "runtime": {
-          "lib/net8.0/NTools.DTO.dll": {
-            "assemblyVersion": "0.2.0.0",
-            "fileVersion": "0.2.0.0"
           }
         }
       },
@@ -1495,15 +1463,15 @@
           "System.Xml.XmlDocument": "4.0.1"
         }
       },
-      "zTools/0.3.1": {
+      "zTools/0.3.6": {
         "dependencies": {
           "Microsoft.AspNetCore.Authentication": "2.3.0",
           "Newtonsoft.Json": "13.0.3"
         },
         "runtime": {
           "lib/net8.0/zTools.dll": {
-            "assemblyVersion": "0.3.1.0",
-            "fileVersion": "0.3.1.0"
+            "assemblyVersion": "0.3.6.0",
+            "fileVersion": "0.3.6.0"
           }
         }
       },
@@ -1542,9 +1510,8 @@
           "Microsoft.AspNetCore.Authentication": "2.3.0",
           "Microsoft.Extensions.DependencyInjection": "9.0.8",
           "Microsoft.Extensions.Http": "9.0.8",
-          "NAuth.ACL": "0.2.3",
-          "NSales.Domain": "1.0.0",
-          "zTools": "0.3.1"
+          "NAuth": "0.5.2",
+          "NSales.Domain": "1.0.0"
         },
         "runtime": {
           "NSales.Application.dll": {
@@ -1559,15 +1526,13 @@
           "Core.Domain": "1.0.0",
           "Microsoft.AspNetCore.Authentication": "2.3.0",
           "Microsoft.Extensions.Logging": "9.0.8",
-          "NAuth.ACL": "0.2.3",
-          "NAuth.DTO": "0.2.3",
+          "NAuth": "0.5.2",
           "NSales.DTO": "1.0.0",
           "Newtonsoft.Json": "13.0.3",
           "NoobsMuc.Coinmarketcap.Client": "3.1.1",
           "SixLabors.ImageSharp": "3.1.11",
           "Stripe.net": "48.5.0",
-          "System.Drawing.Common": "9.0.8",
-          "zTools": "0.3.1"
+          "System.Drawing.Common": "9.0.8"
         },
         "runtime": {
           "NSales.Domain.dll": {
@@ -1578,7 +1543,7 @@
       },
       "NSales.DTO/1.0.0": {
         "dependencies": {
-          "NAuth.DTO": "0.2.3",
+          "NAuth": "0.5.2",
           "Newtonsoft.Json": "13.0.3"
         },
         "runtime": {
@@ -1974,19 +1939,12 @@
       "path": "microsoft.win32.systemevents/9.0.8",
       "hashPath": "microsoft.win32.systemevents.9.0.8.nupkg.sha512"
     },
-    "NAuth.ACL/0.2.3": {
+    "NAuth/0.5.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-eE4/YFRhVWGVJKrjC4CnGpCTSiSiL/t07J/wi1LoRDLSXFMdWU8jz0wGLPo35pIG9wfSjx7EIkjXhaQj3XeWUA==",
-      "path": "nauth.acl/0.2.3",
-      "hashPath": "nauth.acl.0.2.3.nupkg.sha512"
-    },
-    "NAuth.DTO/0.2.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-x6YWUYkc3yreQMC3nwCbA1SQQ401Ku6UQ07Qkyd+IsN5R3ww2eKGraKsVwjZ9I3A2relIvHZUQab5HpwOc6R1Q==",
-      "path": "nauth.dto/0.2.3",
-      "hashPath": "nauth.dto.0.2.3.nupkg.sha512"
+      "sha512": "sha512-/UiUG08YyTIyZ14MJ6qd6vnSkJWml1AryMBnWJQ3eP9Lufu4+u0YnMFiosxI5w9fz8oOp8gn5+bZgayCIwdwXw==",
+      "path": "nauth/0.5.2",
+      "hashPath": "nauth.0.5.2.nupkg.sha512"
     },
     "NCrontab/3.3.3": {
       "type": "package",
@@ -2029,20 +1987,6 @@
       "sha512": "sha512-mw5vcY2IEc7L+IeGrxpp/J5OSnCcjkjAgJYCm/eD52wpZze8zsSifdqV7zXslSMmfJG2iIUGZyo3KuDtEFKwMQ==",
       "path": "npgsql.entityframeworkcore.postgresql/9.0.4",
       "hashPath": "npgsql.entityframeworkcore.postgresql.9.0.4.nupkg.sha512"
-    },
-    "NTools.ACL/0.2.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-5Lr6M7tfje1dxjS4PBjOhI97gld9grtVDAqUMOUlflvlJiwYk8jkJkq7ni5QMyQVBiyW/VRJE8ST5M3lOgp0/w==",
-      "path": "ntools.acl/0.2.0",
-      "hashPath": "ntools.acl.0.2.0.nupkg.sha512"
-    },
-    "NTools.DTO/0.2.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-+kI0P6otjiDOpCVl0MH/x9pHymogtOtWgM0BGyfypZ1oB9LNb6TzGbsUtvac038l85zcGlgnhaaoktuLlCzVlA==",
-      "path": "ntools.dto/0.2.0",
-      "hashPath": "ntools.dto.0.2.0.nupkg.sha512"
     },
     "runtime.native.System/4.0.0": {
       "type": "package",
@@ -2604,12 +2548,12 @@
       "path": "system.xml.xmlserializer/4.0.11",
       "hashPath": "system.xml.xmlserializer.4.0.11.nupkg.sha512"
     },
-    "zTools/0.3.1": {
+    "zTools/0.3.6": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-NRfjrvOmJFJjBXy4vOvRRjHMh0mdUvbd6255vxVg4sV5XFPeSM/PYa3BUmcZxqtxctpjfO9jsjxyBO7eepmd0A==",
-      "path": "ztools/0.3.1",
-      "hashPath": "ztools.0.3.1.nupkg.sha512"
+      "sha512": "sha512-DgCwU5HYEQL3HIu1aD5rjKw4kRoUtIZ2kgJa3fJT2vpC8/DFgHX1eqHNLsMR1NMhsHe5L6vyihuDqAAcNS+rpQ==",
+      "path": "ztools/0.3.6",
+      "hashPath": "ztools.0.3.6.nupkg.sha512"
     },
     "Core.Domain/1.0.0": {
       "type": "project",

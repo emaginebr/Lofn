@@ -127,9 +127,9 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "NAuth.DTO": {
+            "NAuth": {
               "target": "Package",
-              "version": "[0.2.3, )"
+              "version": "[0.5.2, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",

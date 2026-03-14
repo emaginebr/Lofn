@@ -12,15 +12,13 @@
           "Core.Domain": "1.0.0",
           "Microsoft.AspNetCore.Authentication": "2.3.0",
           "Microsoft.Extensions.Logging": "9.0.8",
-          "NAuth.ACL": "0.2.3",
-          "NAuth.DTO": "0.2.3",
+          "NAuth": "0.5.2",
           "NSales.DTO": "1.0.0",
           "Newtonsoft.Json": "13.0.3",
           "NoobsMuc.Coinmarketcap.Client": "3.1.1",
           "SixLabors.ImageSharp": "3.1.11",
           "Stripe.net": "48.5.0",
-          "System.Drawing.Common": "9.0.8",
-          "zTools": "0.3.1"
+          "System.Drawing.Common": "9.0.8"
         },
         "runtime": {
           "NSales.Domain.dll": {}
@@ -166,7 +164,7 @@
       "Microsoft.AspNetCore.Hosting.Server.Abstractions/2.3.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Http.Features": "2.3.0",
-          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.8"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.AspNetCore.Hosting.Server.Abstractions.dll": {
@@ -239,14 +237,37 @@
           }
         }
       },
-      "Microsoft.Extensions.Configuration.Abstractions/8.0.0": {
+      "Microsoft.Extensions.Configuration/9.0.8": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.8",
+          "Microsoft.Extensions.Primitives": "9.0.8"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.Extensions.Configuration.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36511"
+          }
+        }
+      },
+      "Microsoft.Extensions.Configuration.Abstractions/9.0.8": {
         "dependencies": {
           "Microsoft.Extensions.Primitives": "9.0.8"
         },
         "runtime": {
           "lib/net8.0/Microsoft.Extensions.Configuration.Abstractions.dll": {
-            "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.23.53103"
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36511"
+          }
+        }
+      },
+      "Microsoft.Extensions.Configuration.Binder/9.0.8": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.8"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.Extensions.Configuration.Binder.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36511"
           }
         }
       },
@@ -269,15 +290,29 @@
           }
         }
       },
-      "Microsoft.Extensions.Diagnostics.Abstractions/8.0.1": {
+      "Microsoft.Extensions.Diagnostics/9.0.8": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "9.0.8",
+          "Microsoft.Extensions.Diagnostics.Abstractions": "9.0.8",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.8"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.Extensions.Diagnostics.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36511"
+          }
+        }
+      },
+      "Microsoft.Extensions.Diagnostics.Abstractions/9.0.8": {
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.8",
-          "Microsoft.Extensions.Options": "9.0.8"
+          "Microsoft.Extensions.Options": "9.0.8",
+          "System.Diagnostics.DiagnosticSource": "9.0.8"
         },
         "runtime": {
           "lib/net8.0/Microsoft.Extensions.Diagnostics.Abstractions.dll": {
-            "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.1024.46610"
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36511"
           }
         }
       },
@@ -294,9 +329,9 @@
       },
       "Microsoft.Extensions.Hosting.Abstractions/8.0.1": {
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.8",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.8",
-          "Microsoft.Extensions.Diagnostics.Abstractions": "8.0.1",
+          "Microsoft.Extensions.Diagnostics.Abstractions": "9.0.8",
           "Microsoft.Extensions.FileProviders.Abstractions": "8.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "9.0.8"
         },
@@ -304,6 +339,22 @@
           "lib/net8.0/Microsoft.Extensions.Hosting.Abstractions.dll": {
             "assemblyVersion": "8.0.0.0",
             "fileVersion": "8.0.1024.46610"
+          }
+        }
+      },
+      "Microsoft.Extensions.Http/9.0.8": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.8",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.8",
+          "Microsoft.Extensions.Diagnostics": "9.0.8",
+          "Microsoft.Extensions.Logging": "9.0.8",
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.8",
+          "Microsoft.Extensions.Options": "9.0.8"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.Extensions.Http.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36511"
           }
         }
       },
@@ -347,6 +398,21 @@
         },
         "runtime": {
           "lib/net8.0/Microsoft.Extensions.Options.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.825.36511"
+          }
+        }
+      },
+      "Microsoft.Extensions.Options.ConfigurationExtensions/9.0.8": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.8",
+          "Microsoft.Extensions.Configuration.Binder": "9.0.8",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.8",
+          "Microsoft.Extensions.Options": "9.0.8",
+          "Microsoft.Extensions.Primitives": "9.0.8"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.Extensions.Options.ConfigurationExtensions.dll": {
             "assemblyVersion": "9.0.0.0",
             "fileVersion": "9.0.825.36511"
           }
@@ -457,28 +523,19 @@
           }
         }
       },
-      "NAuth.ACL/0.2.3": {
+      "NAuth/0.5.2": {
         "dependencies": {
           "Microsoft.AspNetCore.Authentication": "2.3.0",
-          "NAuth.DTO": "0.2.3",
-          "NTools.ACL": "0.2.0",
-          "System.IdentityModel.Tokens.Jwt": "8.15.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.8",
+          "Microsoft.Extensions.Http": "9.0.8",
+          "Newtonsoft.Json": "13.0.3",
+          "System.IdentityModel.Tokens.Jwt": "8.15.0",
+          "zTools": "0.3.6"
         },
         "runtime": {
-          "lib/net8.0/NAuth.ACL.dll": {
-            "assemblyVersion": "0.2.3.0",
-            "fileVersion": "0.2.3.0"
-          }
-        }
-      },
-      "NAuth.DTO/0.2.3": {
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.3"
-        },
-        "runtime": {
-          "lib/net8.0/NAuth.DTO.dll": {
-            "assemblyVersion": "0.2.3.0",
-            "fileVersion": "0.2.3.0"
+          "lib/net8.0/NAuth.dll": {
+            "assemblyVersion": "0.5.2.0",
+            "fileVersion": "0.5.2.0"
           }
         }
       },
@@ -548,29 +605,6 @@
           "lib/net8.0/NoobsMuc.Coinmarketcap.Client.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "NTools.ACL/0.2.0": {
-        "dependencies": {
-          "Microsoft.AspNetCore.Authentication": "2.3.0",
-          "NTools.DTO": "0.2.0"
-        },
-        "runtime": {
-          "lib/net8.0/NTools.ACL.dll": {
-            "assemblyVersion": "0.2.0.0",
-            "fileVersion": "0.2.0.0"
-          }
-        }
-      },
-      "NTools.DTO/0.2.0": {
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.3"
-        },
-        "runtime": {
-          "lib/net8.0/NTools.DTO.dll": {
-            "assemblyVersion": "0.2.0.0",
-            "fileVersion": "0.2.0.0"
           }
         }
       },
@@ -1381,15 +1415,15 @@
           "System.Xml.XmlDocument": "4.0.1"
         }
       },
-      "zTools/0.3.1": {
+      "zTools/0.3.6": {
         "dependencies": {
           "Microsoft.AspNetCore.Authentication": "2.3.0",
           "Newtonsoft.Json": "13.0.3"
         },
         "runtime": {
           "lib/net8.0/zTools.dll": {
-            "assemblyVersion": "0.3.1.0",
-            "fileVersion": "0.3.1.0"
+            "assemblyVersion": "0.3.6.0",
+            "fileVersion": "0.3.6.0"
           }
         }
       },
@@ -1407,7 +1441,7 @@
       },
       "NSales.DTO/1.0.0": {
         "dependencies": {
-          "NAuth.DTO": "0.2.3",
+          "NAuth": "0.5.2",
           "Newtonsoft.Json": "13.0.3"
         },
         "runtime": {
@@ -1544,12 +1578,26 @@
       "path": "microsoft.aspnetcore.webutilities/2.3.0",
       "hashPath": "microsoft.aspnetcore.webutilities.2.3.0.nupkg.sha512"
     },
-    "Microsoft.Extensions.Configuration.Abstractions/8.0.0": {
+    "Microsoft.Extensions.Configuration/9.0.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-3lE/iLSutpgX1CC0NOW70FJoGARRHbyKmG7dc0klnUZ9Dd9hS6N/POPWhKhMLCEuNN5nXEY5agmlFtH562vqhQ==",
-      "path": "microsoft.extensions.configuration.abstractions/8.0.0",
-      "hashPath": "microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512"
+      "sha512": "sha512-6m+8Xgmf8UWL0p/oGqBM+0KbHE5/ePXbV1hKXgC59zEv0aa0DW5oiiyxDbK5kH5j4gIvyD5uWL0+HadKBJngvQ==",
+      "path": "microsoft.extensions.configuration/9.0.8",
+      "hashPath": "microsoft.extensions.configuration.9.0.8.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Configuration.Abstractions/9.0.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yNou2KM35RvzOh4vUFtl2l33rWPvOCoba+nzEDJ+BgD8aOL/jew4WPCibQvntRfOJ2pJU8ARygSMD+pdjvDHuA==",
+      "path": "microsoft.extensions.configuration.abstractions/9.0.8",
+      "hashPath": "microsoft.extensions.configuration.abstractions.9.0.8.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Configuration.Binder/9.0.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0vK9DnYrYChdiH3yRZWkkp4x4LbrfkWEdBc5HOsQ8t/0CLOWKXKkkhOE8A1shlex0hGydbGrhObeypxz/QTm+w==",
+      "path": "microsoft.extensions.configuration.binder/9.0.8",
+      "hashPath": "microsoft.extensions.configuration.binder.9.0.8.nupkg.sha512"
     },
     "Microsoft.Extensions.DependencyInjection/9.0.8": {
       "type": "package",
@@ -1565,12 +1613,19 @@
       "path": "microsoft.extensions.dependencyinjection.abstractions/9.0.8",
       "hashPath": "microsoft.extensions.dependencyinjection.abstractions.9.0.8.nupkg.sha512"
     },
-    "Microsoft.Extensions.Diagnostics.Abstractions/8.0.1": {
+    "Microsoft.Extensions.Diagnostics/9.0.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-elH2vmwNmsXuKmUeMQ4YW9ldXiF+gSGDgg1vORksob5POnpaI6caj1Hu8zaYbEuibhqCoWg0YRWDazBY3zjBfg==",
-      "path": "microsoft.extensions.diagnostics.abstractions/8.0.1",
-      "hashPath": "microsoft.extensions.diagnostics.abstractions.8.0.1.nupkg.sha512"
+      "sha512": "sha512-BKkLCFXzJvNmdngeYBf72VXoZqTJSb1orvjdzDLaGobicoGFBPW8ug2ru1nnEewMEwJzMgnsjHQY8EaKWmVhKg==",
+      "path": "microsoft.extensions.diagnostics/9.0.8",
+      "hashPath": "microsoft.extensions.diagnostics.9.0.8.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Diagnostics.Abstractions/9.0.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UDY7blv4DCyIJ/8CkNrQKLaAZFypXQavRZ2DWf/2zi1mxYYKKw2t8AOCBWxNntyPZHPGhtEmL3snFM98ADZqTw==",
+      "path": "microsoft.extensions.diagnostics.abstractions/9.0.8",
+      "hashPath": "microsoft.extensions.diagnostics.abstractions.9.0.8.nupkg.sha512"
     },
     "Microsoft.Extensions.FileProviders.Abstractions/8.0.0": {
       "type": "package",
@@ -1585,6 +1640,13 @@
       "sha512": "sha512-nHwq9aPBdBPYXPti6wYEEfgXddfBrYC+CQLn+qISiwQq5tpfaqDZSKOJNxoe9rfQxGf1c+2wC/qWFe1QYJPYqw==",
       "path": "microsoft.extensions.hosting.abstractions/8.0.1",
       "hashPath": "microsoft.extensions.hosting.abstractions.8.0.1.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Http/9.0.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jDj+4aDByk47oESlDDTtk6LWzlXlmoCsjCn6ihd+i9OntN885aPLszUII5+w0B/7wYSZcS3KdjqLAIhKLSiBXQ==",
+      "path": "microsoft.extensions.http/9.0.8",
+      "hashPath": "microsoft.extensions.http.9.0.8.nupkg.sha512"
     },
     "Microsoft.Extensions.Logging/9.0.8": {
       "type": "package",
@@ -1613,6 +1675,13 @@
       "sha512": "sha512-OmTaQ0v4gxGQkehpwWIqPoEiwsPuG/u4HUsbOFoWGx4DKET2AXzopnFe/fE608FIhzc/kcg2p8JdyMRCCUzitQ==",
       "path": "microsoft.extensions.options/9.0.8",
       "hashPath": "microsoft.extensions.options.9.0.8.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Options.ConfigurationExtensions/9.0.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-eW2s6n06x0w6w4nsX+SvpgsFYkl+Y0CttYAt6DKUXeqprX+hzNqjSfOh637fwNJBg7wRBrOIRHe49gKiTgJxzQ==",
+      "path": "microsoft.extensions.options.configurationextensions/9.0.8",
+      "hashPath": "microsoft.extensions.options.configurationextensions.9.0.8.nupkg.sha512"
     },
     "Microsoft.Extensions.Primitives/9.0.8": {
       "type": "package",
@@ -1698,19 +1767,12 @@
       "path": "microsoft.win32.systemevents/9.0.8",
       "hashPath": "microsoft.win32.systemevents.9.0.8.nupkg.sha512"
     },
-    "NAuth.ACL/0.2.3": {
+    "NAuth/0.5.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-eE4/YFRhVWGVJKrjC4CnGpCTSiSiL/t07J/wi1LoRDLSXFMdWU8jz0wGLPo35pIG9wfSjx7EIkjXhaQj3XeWUA==",
-      "path": "nauth.acl/0.2.3",
-      "hashPath": "nauth.acl.0.2.3.nupkg.sha512"
-    },
-    "NAuth.DTO/0.2.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-x6YWUYkc3yreQMC3nwCbA1SQQ401Ku6UQ07Qkyd+IsN5R3ww2eKGraKsVwjZ9I3A2relIvHZUQab5HpwOc6R1Q==",
-      "path": "nauth.dto/0.2.3",
-      "hashPath": "nauth.dto.0.2.3.nupkg.sha512"
+      "sha512": "sha512-/UiUG08YyTIyZ14MJ6qd6vnSkJWml1AryMBnWJQ3eP9Lufu4+u0YnMFiosxI5w9fz8oOp8gn5+bZgayCIwdwXw==",
+      "path": "nauth/0.5.2",
+      "hashPath": "nauth.0.5.2.nupkg.sha512"
     },
     "NETStandard.Library/1.6.0": {
       "type": "package",
@@ -1732,20 +1794,6 @@
       "sha512": "sha512-ONCx2OjdSY+0YG6Npz8PUXehKm67EKCtWwUYFave1Fgbl4eXTc9lwy7pf/JHy9Fli3XfEDBjaGRVbBsSLgsGHA==",
       "path": "noobsmuc.coinmarketcap.client/3.1.1",
       "hashPath": "noobsmuc.coinmarketcap.client.3.1.1.nupkg.sha512"
-    },
-    "NTools.ACL/0.2.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-5Lr6M7tfje1dxjS4PBjOhI97gld9grtVDAqUMOUlflvlJiwYk8jkJkq7ni5QMyQVBiyW/VRJE8ST5M3lOgp0/w==",
-      "path": "ntools.acl/0.2.0",
-      "hashPath": "ntools.acl.0.2.0.nupkg.sha512"
-    },
-    "NTools.DTO/0.2.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-+kI0P6otjiDOpCVl0MH/x9pHymogtOtWgM0BGyfypZ1oB9LNb6TzGbsUtvac038l85zcGlgnhaaoktuLlCzVlA==",
-      "path": "ntools.dto/0.2.0",
-      "hashPath": "ntools.dto.0.2.0.nupkg.sha512"
     },
     "runtime.native.System/4.0.0": {
       "type": "package",
@@ -2279,12 +2327,12 @@
       "path": "system.xml.xmlserializer/4.0.11",
       "hashPath": "system.xml.xmlserializer.4.0.11.nupkg.sha512"
     },
-    "zTools/0.3.1": {
+    "zTools/0.3.6": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-NRfjrvOmJFJjBXy4vOvRRjHMh0mdUvbd6255vxVg4sV5XFPeSM/PYa3BUmcZxqtxctpjfO9jsjxyBO7eepmd0A==",
-      "path": "ztools/0.3.1",
-      "hashPath": "ztools.0.3.1.nupkg.sha512"
+      "sha512": "sha512-DgCwU5HYEQL3HIu1aD5rjKw4kRoUtIZ2kgJa3fJT2vpC8/DFgHX1eqHNLsMR1NMhsHe5L6vyihuDqAAcNS+rpQ==",
+      "path": "ztools/0.3.6",
+      "hashPath": "ztools.0.3.6.nupkg.sha512"
     },
     "Core.Domain/1.0.0": {
       "type": "project",

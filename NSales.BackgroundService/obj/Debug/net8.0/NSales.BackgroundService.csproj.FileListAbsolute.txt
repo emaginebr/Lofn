@@ -55,8 +55,6 @@ C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\DB.Infra.dll
 C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NSales.Application.dll
 C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NSales.Domain.dll
 C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NSales.DTO.dll
-C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NAuth.ACL.dll
-C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NAuth.DTO.dll
 C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NSales.Application.pdb
 C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NSales.Domain.pdb
 C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NSales.DTO.pdb
@@ -95,6 +93,5 @@ C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\Microsoft.IdentityMode
 C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
 C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
 C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
-C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NTools.ACL.dll
-C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NTools.DTO.dll
 C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\repos\NSales\NSales.BackgroundService\bin\Debug\net8.0\NAuth.dll

@@ -13,6 +13,7 @@
     <Folder Include="Configuration\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="NAuth" Version="0.5.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>
