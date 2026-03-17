@@ -8,9 +8,11 @@ using Lofn.Domain.Core;
 using Lofn.Domain.Models;
 using Lofn.Domain.Services;
 using Lofn.Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Lofn.ACL.Handlers;
 using Lofn.Domain;
 using NAuth.ACL;
 using NAuth.ACL.Interfaces;
@@ -29,15 +31,18 @@ namespace Lofn.Application
                 services.AddTransient(serviceType, implementationType);
         }
 
-        public static void ConfigureLofn(this IServiceCollection services, string connectionString, bool scoped = true)
+        public static void ConfigureLofn(this IServiceCollection services, bool scoped = true)
         {
-            if (scoped)
-                services.AddDbContext<LofnContext>(x => x.UseLazyLoadingProxies().UseNpgsql(connectionString));
-            else
-                services.AddDbContextFactory<LofnContext>(x => x.UseLazyLoadingProxies().UseNpgsql(connectionString));
+            #region Tenant
+            services.AddHttpContextAccessor();
+            services.AddScoped<ITenantContext, TenantContext>();
+            services.AddScoped<ITenantResolver, TenantResolver>();
+            services.AddScoped<TenantDbContextFactory>();
+            services.AddScoped(sp => sp.GetRequiredService<TenantDbContextFactory>().CreateDbContext());
+            services.AddTransient<TenantHeaderHandler>();
+            #endregion
 
             #region Infra
-            injectDependency(typeof(LofnContext), typeof(LofnContext), services, scoped);
             injectDependency(typeof(IUnitOfWork), typeof(UnitOfWork), services, scoped);
             injectDependency(typeof(ILogCore), typeof(LogCore), services, scoped);
             #endregion

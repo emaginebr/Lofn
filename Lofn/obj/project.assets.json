@@ -2084,6 +2084,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "Microsoft.AspNetCore.Authentication >= 2.3.0",
+      "Microsoft.Extensions.Configuration.Abstractions >= 9.0.8",
       "NAuth >= 0.5.2",
       "Newtonsoft.Json >= 13.0.3"
     ]
@@ -2142,6 +2143,10 @@
           "Microsoft.AspNetCore.Authentication": {
             "target": "Package",
             "version": "[2.3.0, )"
+          },
+          "Microsoft.Extensions.Configuration.Abstractions": {
+            "target": "Package",
+            "version": "[9.0.8, )"
           },
           "NAuth": {
             "target": "Package",

@@ -7,7 +7,7 @@
 
 ## Overview
 
-**Lofn** (MonexUp) is a multi-tenant sales and e-commerce platform backend built with **.NET 8** following **Clean Architecture** principles. It provides RESTful APIs for managing products, orders, and multi-tenant networks with sellers, supporting payment processing via Stripe, file storage with AWS S3, and delegated authentication through NAuth.
+**Lofn** is a multi-tenant sales and e-commerce platform backend built with **.NET 8** following **Clean Architecture** principles. It provides RESTful APIs for managing products, orders, and multi-tenant networks with sellers, supporting payment processing via Stripe, file storage with AWS S3, and delegated authentication through NAuth.
 
 The solution is organized into layered projects with clear dependency boundaries, making it suitable for scalable deployments and NuGet package distribution of shared DTOs and ACL clients.
 

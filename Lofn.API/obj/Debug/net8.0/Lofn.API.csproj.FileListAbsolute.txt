@@ -94,7 +94,6 @@ C:\repos\NSales\Lofn.API\obj\Debug\net8.0\Lofn.API.pdb
 C:\repos\NSales\Lofn.API\obj\Debug\net8.0\Lofn.API.genruntimeconfig.cache
 C:\repos\NSales\Lofn.API\obj\Debug\net8.0\ref\Lofn.API.dll
 C:\repos\Lofn\Lofn.API\bin\Debug\net8.0\appsettings.json
-C:\repos\Lofn\Lofn.API\bin\Debug\net8.0\appsettings.Template.json
 C:\repos\Lofn\Lofn.API\bin\Debug\net8.0\Lofn.API.staticwebassets.endpoints.json
 C:\repos\Lofn\Lofn.API\bin\Debug\net8.0\Lofn.API.exe
 C:\repos\Lofn\Lofn.API\bin\Debug\net8.0\Lofn.API.deps.json
@@ -188,3 +187,6 @@ C:\repos\Lofn\Lofn.API\obj\Debug\net8.0\refint\Lofn.API.dll
 C:\repos\Lofn\Lofn.API\obj\Debug\net8.0\Lofn.API.pdb
 C:\repos\Lofn\Lofn.API\obj\Debug\net8.0\Lofn.API.genruntimeconfig.cache
 C:\repos\Lofn\Lofn.API\obj\Debug\net8.0\ref\Lofn.API.dll
+C:\repos\Lofn\Lofn.API\bin\Debug\net8.0\appsettings.Development.json
+C:\repos\Lofn\Lofn.API\bin\Debug\net8.0\appsettings.Docker.json
+C:\repos\Lofn\Lofn.API\bin\Debug\net8.0\appsettings.Production.json

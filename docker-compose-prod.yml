@@ -1,0 +1,20 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Lofn.API/Dockerfile
+    container_name: lofn-api
+    restart: unless-stopped
+    ports:
+      - "80:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      Tenants__monexup__ConnectionString: ${MONEXUP_CONNECTION_STRING}
+      Tenants__monexup__JwtSecret: ${MONEXUP_JWT_SECRET}
+    networks:
+      - emagine-network
+
+networks:
+  emagine-network:
+    external: true

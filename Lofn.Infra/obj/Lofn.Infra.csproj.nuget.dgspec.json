@@ -345,6 +345,10 @@
               "target": "Package",
               "version": "[2.3.0, )"
             },
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.8, )"
+            },
             "NAuth": {
               "target": "Package",
               "version": "[0.5.2, )"

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Lofn (MonexUp) is a full-stack sales/e-commerce platform with a .NET 8 backend API and a React 18 TypeScript frontend. It supports multi-tenant networks with sellers, products, orders, and invoices.
+Lofn is a full-stack sales/e-commerce platform with a .NET 8 backend API and a React 18 TypeScript frontend. It supports multi-tenant networks with sellers, products, orders, and invoices.
 
 ## Commands
 
@@ -75,7 +75,7 @@ lib/nauth-core/ → Auth library
 ## Environment
 
 - **Dev API URL:** `https://localhost:44374` (from `.env`)
-- **Prod API URL:** `https://monexup.com/api` (from `.env.production`)
+- **Prod API URL:** configured in `.env.production`
 - **Database:** PostgreSQL
 - **TypeScript:** strict mode enabled, strictNullChecks disabled
 

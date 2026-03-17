@@ -1,9 +1,9 @@
+using Lofn.API.Middlewares;
 using Lofn.Application;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +16,6 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Server.Kestrel.Https;
-using System.Security.Cryptography.X509Certificates;
 using NAuth.DTO.Settings;
 using Lofn.DTO.Settings;
 using zTools.DTO.Settings;
@@ -36,12 +34,11 @@ namespace Lofn.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<MailerSendSetting>(Configuration.GetSection("MailerSend"));
             services.Configure<NAuthSetting>(Configuration.GetSection("NAuth"));
             services.Configure<zToolsetting>(Configuration.GetSection("zTools"));
             services.Configure<LofnSetting>(Configuration.GetSection("Lofn"));
 
-            services.ConfigureLofn(Configuration.GetConnectionString("LofnContext"));
+            services.ConfigureLofn();
             services.AddControllers();
             services.AddHealthChecks();
             services.AddSwaggerGen(c =>
@@ -57,16 +54,12 @@ namespace Lofn.API
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
-            services.AddHttpsRedirection(options =>
-            {
-                options.HttpsPort = 443;
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.EnvironmentName == "Docker")
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger(c =>
@@ -75,12 +68,7 @@ namespace Lofn.API
                 });
                 app.UseSwaggerUI(c => {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lofn.API v1");
-                    //c.RoutePrefix = string.Empty;
                 });
-            }
-            else
-            {
-                app.UseHttpsRedirection();
             }
 
 
@@ -104,6 +92,7 @@ namespace Lofn.API
             app.UseRouting();
             app.UseCors("MyPolicy");
 
+            app.UseMiddleware<TenantMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 
