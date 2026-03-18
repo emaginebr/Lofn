@@ -72,6 +72,7 @@ namespace Lofn.Application
             injectDependency(typeof(IProductImageService), typeof(ProductImageService), services, scoped);
             injectDependency(typeof(ICategoryService), typeof(CategoryService), services, scoped);
             injectDependency(typeof(IStoreService), typeof(StoreService), services, scoped);
+            injectDependency(typeof(IStoreUserService), typeof(StoreUserService), services, scoped);
             injectDependency(typeof(IOrderService), typeof(OrderService), services, scoped);
             #endregion
 

@@ -68,7 +68,7 @@ namespace Lofn.API.Controllers
 
         [Authorize]
         [HttpPost("insert")]
-        public async Task<ActionResult<StoreInfo>> Insert([FromBody] StoreInfo store)
+        public async Task<ActionResult<StoreInfo>> Insert([FromBody] StoreInsertInfo store)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace Lofn.API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public async Task<ActionResult<StoreInfo>> Update([FromBody] StoreInfo store)
+        public async Task<ActionResult<StoreInfo>> Update([FromBody] StoreUpdateInfo store)
         {
             try
             {
@@ -95,8 +95,12 @@ namespace Lofn.API.Controllers
                 if (userSession == null)
                     return Unauthorized();
 
-                var model = await _storeService.UpdateAsync(store);
+                var model = await _storeService.UpdateAsync(store, userSession.UserId);
                 return Ok(StoreMapper.ToInfo(model));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
             }
             catch (Exception ex)
             {

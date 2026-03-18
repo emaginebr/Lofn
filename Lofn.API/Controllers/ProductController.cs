@@ -14,19 +14,22 @@ namespace Lofn.API.Controllers
     {
         private readonly IUserClient _userClient;
         private readonly IProductService _productService;
+        private readonly IStoreService _storeService;
 
         public ProductController(
             IUserClient userClient,
-            IProductService productService
+            IProductService productService,
+            IStoreService storeService
         )
         {
             _userClient = userClient;
             _productService = productService;
+            _storeService = storeService;
         }
 
         [Authorize]
-        [HttpPost("insert")]
-        public async Task<ActionResult<ProductInfo>> Insert([FromBody] ProductInfo product)
+        [HttpPost("{storeSlug}/insert")]
+        public async Task<ActionResult<ProductInfo>> Insert(string storeSlug, [FromBody] ProductInsertInfo product)
         {
             try
             {
@@ -34,8 +37,16 @@ namespace Lofn.API.Controllers
                 if (userSession == null)
                     return Unauthorized();
 
-                var newProduct = await _productService.InsertAsync(product, userSession.UserId);
+                var store = await _storeService.GetBySlugAsync(storeSlug);
+                if (store == null)
+                    return NotFound("Store not found");
+
+                var newProduct = await _productService.InsertAsync(product, store.StoreId, userSession.UserId);
                 return Ok(await _productService.GetProductInfoAsync(newProduct));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
             }
             catch (Exception ex)
             {
@@ -44,8 +55,8 @@ namespace Lofn.API.Controllers
         }
 
         [Authorize]
-        [HttpPost("update")]
-        public async Task<ActionResult<ProductInfo>> Update([FromBody] ProductInfo product)
+        [HttpPost("{storeSlug}/update")]
+        public async Task<ActionResult<ProductInfo>> Update(string storeSlug, [FromBody] ProductUpdateInfo product)
         {
             try
             {
@@ -53,8 +64,16 @@ namespace Lofn.API.Controllers
                 if (userSession == null)
                     return Unauthorized();
 
-                var newProduct = await _productService.UpdateAsync(product, userSession.UserId);
-                return Ok(await _productService.GetProductInfoAsync(newProduct));
+                var store = await _storeService.GetBySlugAsync(storeSlug);
+                if (store == null)
+                    return NotFound("Store not found");
+
+                var updatedProduct = await _productService.UpdateAsync(product, store.StoreId, userSession.UserId);
+                return Ok(await _productService.GetProductInfoAsync(updatedProduct));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
             }
             catch (Exception ex)
             {
@@ -82,8 +101,8 @@ namespace Lofn.API.Controllers
         }
 
         [Authorize]
-        [HttpGet("getById/{productId}")]
-        public async Task<ActionResult<ProductInfo>> GetById(long productId)
+        [HttpGet("{storeSlug}/getById/{productId}")]
+        public async Task<ActionResult<ProductInfo>> GetById(string storeSlug, long productId)
         {
             try
             {
@@ -91,11 +110,19 @@ namespace Lofn.API.Controllers
                 if (userSession == null)
                     return Unauthorized();
 
-                var product = await _productService.GetByIdAsync(productId);
+                var store = await _storeService.GetBySlugAsync(storeSlug);
+                if (store == null)
+                    return NotFound("Store not found");
+
+                var product = await _productService.GetByIdAsync(productId, store.StoreId, userSession.UserId);
                 if (product == null)
                     return NotFound();
 
                 return Ok(await _productService.GetProductInfoAsync(product));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
             }
             catch (Exception ex)
             {

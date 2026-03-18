@@ -16,22 +16,38 @@ namespace Lofn.API.Controllers
     {
         private readonly IUserClient _userClient;
         private readonly ICategoryService _categoryService;
+        private readonly IStoreService _storeService;
 
         public CategoryController(
             IUserClient userClient,
-            ICategoryService categoryService
+            ICategoryService categoryService,
+            IStoreService storeService
         )
         {
             _userClient = userClient;
             _categoryService = categoryService;
+            _storeService = storeService;
         }
 
-        [HttpGet("list")]
-        public async Task<ActionResult<IList<CategoryInfo>>> List()
+        [Authorize]
+        [HttpGet("{storeSlug}/list")]
+        public async Task<ActionResult<IList<CategoryInfo>>> List(string storeSlug)
         {
             try
             {
-                return Ok(await _categoryService.ListWithProductCountAsync());
+                var userSession = _userClient.GetUserInSession(HttpContext);
+                if (userSession == null)
+                    return Unauthorized();
+
+                var store = await _storeService.GetBySlugAsync(storeSlug);
+                if (store == null)
+                    return NotFound("Store not found");
+
+                return Ok(await _categoryService.ListByStoreAsync(store.StoreId));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
             }
             catch (Exception ex)
             {
@@ -40,8 +56,8 @@ namespace Lofn.API.Controllers
         }
 
         [Authorize]
-        [HttpGet("getById/{categoryId}")]
-        public async Task<ActionResult<CategoryInfo>> GetById(long categoryId)
+        [HttpGet("{storeSlug}/getById/{categoryId}")]
+        public async Task<ActionResult<CategoryInfo>> GetById(string storeSlug, long categoryId)
         {
             try
             {
@@ -49,12 +65,20 @@ namespace Lofn.API.Controllers
                 if (userSession == null)
                     return Unauthorized();
 
-                var model = await _categoryService.GetByIdAsync(categoryId);
+                var store = await _storeService.GetBySlugAsync(storeSlug);
+                if (store == null)
+                    return NotFound("Store not found");
+
+                var model = await _categoryService.GetByIdAsync(categoryId, store.StoreId, userSession.UserId);
                 if (model == null)
                     return NotFound();
 
                 return Ok(CategoryMapper.ToInfo(model));
             }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
@@ -62,8 +86,8 @@ namespace Lofn.API.Controllers
         }
 
         [Authorize]
-        [HttpPost("insert")]
-        public async Task<ActionResult<CategoryInfo>> Insert([FromBody] CategoryInfo category)
+        [HttpPost("{storeSlug}/insert")]
+        public async Task<ActionResult<CategoryInfo>> Insert(string storeSlug, [FromBody] CategoryInsertInfo category)
         {
             try
             {
@@ -71,9 +95,17 @@ namespace Lofn.API.Controllers
                 if (userSession == null)
                     return Unauthorized();
 
-                var model = await _categoryService.InsertAsync(category);
+                var store = await _storeService.GetBySlugAsync(storeSlug);
+                if (store == null)
+                    return NotFound("Store not found");
+
+                var model = await _categoryService.InsertAsync(category, store.StoreId, userSession.UserId);
                 return Ok(CategoryMapper.ToInfo(model));
             }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
@@ -81,8 +113,8 @@ namespace Lofn.API.Controllers
         }
 
         [Authorize]
-        [HttpPost("update")]
-        public async Task<ActionResult<CategoryInfo>> Update([FromBody] CategoryInfo category)
+        [HttpPost("{storeSlug}/update")]
+        public async Task<ActionResult<CategoryInfo>> Update(string storeSlug, [FromBody] CategoryUpdateInfo category)
         {
             try
             {
@@ -90,9 +122,17 @@ namespace Lofn.API.Controllers
                 if (userSession == null)
                     return Unauthorized();
 
-                var model = await _categoryService.UpdateAsync(category);
+                var store = await _storeService.GetBySlugAsync(storeSlug);
+                if (store == null)
+                    return NotFound("Store not found");
+
+                var model = await _categoryService.UpdateAsync(category, store.StoreId, userSession.UserId);
                 return Ok(CategoryMapper.ToInfo(model));
             }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
@@ -100,8 +140,8 @@ namespace Lofn.API.Controllers
         }
 
         [Authorize]
-        [HttpDelete("delete/{categoryId}")]
-        public async Task<IActionResult> Delete(long categoryId)
+        [HttpDelete("{storeSlug}/delete/{categoryId}")]
+        public async Task<IActionResult> Delete(string storeSlug, long categoryId)
         {
             try
             {
@@ -109,8 +149,16 @@ namespace Lofn.API.Controllers
                 if (userSession == null)
                     return Unauthorized();
 
-                await _categoryService.DeleteAsync(categoryId);
+                var store = await _storeService.GetBySlugAsync(storeSlug);
+                if (store == null)
+                    return NotFound("Store not found");
+
+                await _categoryService.DeleteAsync(categoryId, store.StoreId, userSession.UserId);
                 return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
             }
             catch (Exception ex)
             {

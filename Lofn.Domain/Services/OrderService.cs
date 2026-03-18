@@ -119,7 +119,6 @@ namespace Lofn.Domain.Services
             }
             return new OrderListPagedResult
             {
-                Sucesso = true,
                 Orders = orders,
                 PageNum = pageNum,
                 PageCount = pageCount

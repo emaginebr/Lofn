@@ -10,12 +10,22 @@ namespace Lofn.Domain.Mappers
             return new StoreInfo
             {
                 StoreId = md.StoreId,
+                Slug = md.Slug,
                 Name = md.Name,
                 OwnerId = md.OwnerId
             };
         }
 
-        public static StoreModel ToModel(StoreInfo dto, long ownerId)
+        public static StoreModel ToInsertModel(StoreInsertInfo dto, long ownerId)
+        {
+            return new StoreModel
+            {
+                Name = dto.Name,
+                OwnerId = ownerId
+            };
+        }
+
+        public static StoreModel ToUpdateModel(StoreUpdateInfo dto, long ownerId)
         {
             return new StoreModel
             {

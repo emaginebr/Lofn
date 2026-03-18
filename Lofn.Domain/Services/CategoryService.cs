@@ -15,19 +15,28 @@ namespace Lofn.Domain.Services
     {
         private readonly IStringClient _stringClient;
         private readonly ICategoryRepository<CategoryModel> _categoryRepository;
+        private readonly IStoreRepository<StoreModel> _storeRepository;
 
         public CategoryService(
             IStringClient stringClient,
-            ICategoryRepository<CategoryModel> categoryRepository
+            ICategoryRepository<CategoryModel> categoryRepository,
+            IStoreRepository<StoreModel> storeRepository
         )
         {
             _stringClient = stringClient;
             _categoryRepository = categoryRepository;
+            _storeRepository = storeRepository;
         }
 
         public async Task<IList<CategoryInfo>> ListAllAsync()
         {
             var items = await _categoryRepository.ListAllAsync();
+            return items.Select(CategoryMapper.ToInfo).ToList();
+        }
+
+        public async Task<IList<CategoryInfo>> ListByStoreAsync(long storeId)
+        {
+            var items = await _categoryRepository.ListByStoreAsync(storeId);
             return items.Select(CategoryMapper.ToInfo).ToList();
         }
 
@@ -43,55 +52,97 @@ namespace Lofn.Domain.Services
             }).ToList();
         }
 
-        public async Task<CategoryModel> GetByIdAsync(long categoryId)
+        private async Task ValidateStoreOwnerAsync(long storeId, long userId)
         {
-            return await _categoryRepository.GetByIdAsync(categoryId);
+            if (storeId <= 0)
+                throw new Exception("StoreId is required");
+
+            var store = await _storeRepository.GetByIdAsync(storeId);
+            if (store == null)
+                throw new Exception("Store not found");
+
+            if (store.OwnerId != userId)
+                throw new UnauthorizedAccessException("Access denied: user is not the owner of this store");
         }
 
-        private async Task<string> GenerateSlugAsync(long categoryId, string slug, string name)
+        public async Task<CategoryModel> GetByIdAsync(long categoryId, long storeId, long userId)
+        {
+            await ValidateStoreOwnerAsync(storeId, userId);
+
+            var model = await _categoryRepository.GetByIdAsync(categoryId);
+            if (model == null)
+                return null;
+
+            if (model.StoreId != storeId)
+                throw new UnauthorizedAccessException("Access denied: category does not belong to this store");
+
+            return model;
+        }
+
+        private async Task<string> GenerateSlugAsync(long storeId, long categoryId, string name)
         {
             string newSlug;
             int c = 0;
             do
             {
-                newSlug = await _stringClient.GenerateSlugAsync(!string.IsNullOrEmpty(slug) ? slug : name);
+                newSlug = await _stringClient.GenerateSlugAsync(name);
                 if (c > 0)
                 {
                     newSlug += c.ToString();
                 }
                 c++;
-            } while (await _categoryRepository.ExistSlugAsync(categoryId, newSlug));
+            } while (await _categoryRepository.ExistSlugAsync(storeId, categoryId, newSlug));
             return newSlug;
         }
 
-        public async Task<CategoryModel> InsertAsync(CategoryInfo category)
+        public async Task<CategoryModel> InsertAsync(CategoryInsertInfo category, long storeId, long userId)
         {
             if (string.IsNullOrEmpty(category.Name))
-            {
-                throw new Exception("Name is empty");
-            }
+                throw new Exception("Name is required");
 
-            var model = CategoryMapper.ToModel(category);
-            model.Slug = await GenerateSlugAsync(0, category.Slug, category.Name);
+            await ValidateStoreOwnerAsync(storeId, userId);
+
+            var model = new CategoryModel
+            {
+                Name = category.Name,
+                StoreId = storeId
+            };
+            model.Slug = await GenerateSlugAsync(storeId, 0, category.Name);
 
             return await _categoryRepository.InsertAsync(model);
         }
 
-        public async Task<CategoryModel> UpdateAsync(CategoryInfo category)
+        public async Task<CategoryModel> UpdateAsync(CategoryUpdateInfo category, long storeId, long userId)
         {
             if (string.IsNullOrEmpty(category.Name))
-            {
-                throw new Exception("Name is empty");
-            }
+                throw new Exception("Name is required");
 
-            var model = CategoryMapper.ToModel(category);
-            model.Slug = await GenerateSlugAsync(category.CategoryId, category.Slug, category.Name);
+            await ValidateStoreOwnerAsync(storeId, userId);
 
-            return await _categoryRepository.UpdateAsync(model);
+            var existing = await _categoryRepository.GetByIdAsync(category.CategoryId);
+            if (existing == null)
+                throw new Exception("Category not found");
+
+            if (existing.StoreId != storeId)
+                throw new UnauthorizedAccessException("Access denied: category does not belong to this store");
+
+            existing.Name = category.Name;
+            existing.Slug = await GenerateSlugAsync(storeId, category.CategoryId, category.Name);
+
+            return await _categoryRepository.UpdateAsync(existing);
         }
 
-        public async Task DeleteAsync(long categoryId)
+        public async Task DeleteAsync(long categoryId, long storeId, long userId)
         {
+            await ValidateStoreOwnerAsync(storeId, userId);
+
+            var model = await _categoryRepository.GetByIdAsync(categoryId);
+            if (model == null)
+                throw new Exception("Category not found");
+
+            if (model.StoreId != storeId)
+                throw new UnauthorizedAccessException("Access denied: category does not belong to this store");
+
             await _categoryRepository.DeleteAsync(categoryId);
         }
     }

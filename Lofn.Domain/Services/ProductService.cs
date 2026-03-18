@@ -18,13 +18,15 @@ namespace Lofn.Domain.Services
         private readonly IStringClient _stringClient;
         private readonly IProductRepository<ProductModel> _productRepository;
         private readonly IProductImageService _productImageService;
+        private readonly IStoreUserRepository<StoreUserModel> _storeUserRepository;
 
         public ProductService(
             ITenantResolver tenantResolver,
             IFileClient fileClient,
             IStringClient stringClient,
             IProductRepository<ProductModel> productRepository,
-            IProductImageService productImageService
+            IProductImageService productImageService,
+            IStoreUserRepository<StoreUserModel> storeUserRepository
         )
         {
             _tenantResolver = tenantResolver;
@@ -32,11 +34,35 @@ namespace Lofn.Domain.Services
             _stringClient = stringClient;
             _productRepository = productRepository;
             _productImageService = productImageService;
+            _storeUserRepository = storeUserRepository;
+        }
+
+        private async Task ValidateStoreUserAsync(long storeId, long userId)
+        {
+            if (storeId <= 0)
+                throw new Exception("StoreId is required");
+
+            if (!await _storeUserRepository.ExistsAsync(storeId, userId))
+                throw new UnauthorizedAccessException("Access denied: user does not belong to this store");
         }
 
         public async Task<ProductModel> GetByIdAsync(long productId)
         {
             return await _productRepository.GetByIdAsync(productId);
+        }
+
+        public async Task<ProductModel> GetByIdAsync(long productId, long storeId, long userId)
+        {
+            await ValidateStoreUserAsync(storeId, userId);
+
+            var model = await _productRepository.GetByIdAsync(productId);
+            if (model == null)
+                return null;
+
+            if (model.StoreId != storeId)
+                throw new UnauthorizedAccessException("Access denied: product does not belong to this store");
+
+            return model;
         }
 
         public async Task<ProductModel> GetBySlugAsync(string productSlug)
@@ -52,54 +78,76 @@ namespace Lofn.Domain.Services
             return info;
         }
 
-        private async Task<string> GenerateSlugAsync(long productId, string slug, string name)
+        private async Task<string> GenerateSlugAsync(long storeId, long productId, string name)
         {
             string newSlug;
             int c = 0;
             do
             {
-                newSlug = await _stringClient.GenerateSlugAsync(!string.IsNullOrEmpty(slug) ? slug : name);
+                newSlug = await _stringClient.GenerateSlugAsync(name);
                 if (c > 0)
                 {
                     newSlug += c.ToString();
                 }
                 c++;
-            } while (await _productRepository.ExistSlugAsync(productId, newSlug));
+            } while (await _productRepository.ExistSlugAsync(storeId, productId, newSlug));
             return newSlug;
         }
 
-        public async Task<ProductModel> InsertAsync(ProductInfo product, long userId)
+        public async Task<ProductModel> InsertAsync(ProductInsertInfo product, long storeId, long userId)
         {
             if (string.IsNullOrEmpty(product.Name))
-            {
-                throw new Exception("Name is empty");
-            }
-            if (!(product.Price > 0))
-            {
-                throw new Exception("Price cant be 0");
-            }
+                throw new Exception("Name is required");
 
-            var model = ProductMapper.ToModel(product, userId);
-            model.Slug = await GenerateSlugAsync(product.ProductId, product.Slug, product.Name);
+            if (!(product.Price > 0))
+                throw new Exception("Price is required");
+
+            await ValidateStoreUserAsync(storeId, userId);
+
+            var model = new ProductModel
+            {
+                StoreId = storeId,
+                CategoryId = product.CategoryId,
+                UserId = userId,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Frequency = product.Frequency,
+                Limit = product.Limit,
+                Status = product.Status
+            };
+            model.Slug = await GenerateSlugAsync(storeId, 0, product.Name);
 
             return await _productRepository.InsertAsync(model);
         }
 
-        public async Task<ProductModel> UpdateAsync(ProductInfo product, long userId)
+        public async Task<ProductModel> UpdateAsync(ProductUpdateInfo product, long storeId, long userId)
         {
             if (string.IsNullOrEmpty(product.Name))
-            {
-                throw new Exception("Name is empty");
-            }
+                throw new Exception("Name is required");
+
             if (!(product.Price > 0))
-            {
-                throw new Exception("Price cant be 0");
-            }
+                throw new Exception("Price is required");
 
-            var model = ProductMapper.ToModel(product, userId);
-            model.Slug = await GenerateSlugAsync(product.ProductId, product.Slug, product.Name);
+            await ValidateStoreUserAsync(storeId, userId);
 
-            return await _productRepository.UpdateAsync(model);
+            var existing = await _productRepository.GetByIdAsync(product.ProductId);
+            if (existing == null)
+                throw new Exception("Product not found");
+
+            if (existing.StoreId != storeId)
+                throw new UnauthorizedAccessException("Access denied: product does not belong to this store");
+
+            existing.CategoryId = product.CategoryId;
+            existing.Name = product.Name;
+            existing.Description = product.Description;
+            existing.Price = product.Price;
+            existing.Frequency = product.Frequency;
+            existing.Limit = product.Limit;
+            existing.Status = product.Status;
+            existing.Slug = await GenerateSlugAsync(storeId, product.ProductId, product.Name);
+
+            return await _productRepository.UpdateAsync(existing);
         }
 
         public async Task<ProductListPagedResult> SearchAsync(ProductSearchInternalParam param)
@@ -120,7 +168,6 @@ namespace Lofn.Domain.Services
 
             return new ProductListPagedResult
             {
-                Sucesso = true,
                 Products = products,
                 PageNum = param.PageNum,
                 PageCount = pageCount

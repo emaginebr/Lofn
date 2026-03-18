@@ -10,6 +10,7 @@ namespace Lofn.Infra.Mappers
             return new StoreModel
             {
                 StoreId = row.StoreId,
+                Slug = row.Slug,
                 Name = row.Name,
                 OwnerId = row.OwnerId
             };
@@ -18,6 +19,7 @@ namespace Lofn.Infra.Mappers
         public static void ToEntity(StoreModel md, Store row)
         {
             row.StoreId = md.StoreId;
+            row.Slug = md.Slug;
             row.Name = md.Name;
             row.OwnerId = md.OwnerId;
         }

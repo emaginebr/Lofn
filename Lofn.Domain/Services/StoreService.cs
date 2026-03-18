@@ -3,6 +3,7 @@ using Lofn.Domain.Mappers;
 using Lofn.Domain.Models;
 using Lofn.Domain.Interfaces;
 using Lofn.DTO.Store;
+using zTools.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,19 @@ namespace Lofn.Domain.Services
 {
     public class StoreService : IStoreService
     {
+        private readonly IStringClient _stringClient;
         private readonly IStoreRepository<StoreModel> _storeRepository;
+        private readonly IStoreUserRepository<StoreUserModel> _storeUserRepository;
 
-        public StoreService(IStoreRepository<StoreModel> storeRepository)
+        public StoreService(
+            IStringClient stringClient,
+            IStoreRepository<StoreModel> storeRepository,
+            IStoreUserRepository<StoreUserModel> storeUserRepository
+        )
         {
+            _stringClient = stringClient;
             _storeRepository = storeRepository;
+            _storeUserRepository = storeUserRepository;
         }
 
         public async Task<IList<StoreInfo>> ListAllAsync()
@@ -36,25 +45,59 @@ namespace Lofn.Domain.Services
             return await _storeRepository.GetByIdAsync(storeId);
         }
 
-        public async Task<StoreModel> InsertAsync(StoreInfo store, long ownerId)
+        public async Task<StoreModel> GetBySlugAsync(string slug)
         {
-            if (string.IsNullOrEmpty(store.Name))
-            {
-                throw new Exception("Name is empty");
-            }
-
-            var model = StoreMapper.ToModel(store, ownerId);
-            return await _storeRepository.InsertAsync(model);
+            return await _storeRepository.GetBySlugAsync(slug);
         }
 
-        public async Task<StoreModel> UpdateAsync(StoreInfo store)
+        private async Task<string> GenerateSlugAsync(long storeId, string name)
+        {
+            string newSlug;
+            int c = 0;
+            do
+            {
+                newSlug = await _stringClient.GenerateSlugAsync(name);
+                if (c > 0)
+                {
+                    newSlug += c.ToString();
+                }
+                c++;
+            } while (await _storeRepository.ExistSlugAsync(storeId, newSlug));
+            return newSlug;
+        }
+
+        public async Task<StoreModel> InsertAsync(StoreInsertInfo store, long ownerId)
         {
             if (string.IsNullOrEmpty(store.Name))
-            {
-                throw new Exception("Name is empty");
-            }
+                throw new Exception("Name is required");
 
-            var model = StoreMapper.ToModel(store, store.OwnerId);
+            var model = StoreMapper.ToInsertModel(store, ownerId);
+            model.Slug = await GenerateSlugAsync(0, store.Name);
+            var created = await _storeRepository.InsertAsync(model);
+
+            await _storeUserRepository.InsertAsync(new StoreUserModel
+            {
+                StoreId = created.StoreId,
+                UserId = ownerId
+            });
+
+            return created;
+        }
+
+        public async Task<StoreModel> UpdateAsync(StoreUpdateInfo store, long ownerId)
+        {
+            if (string.IsNullOrEmpty(store.Name))
+                throw new Exception("Name is required");
+
+            var existing = await _storeRepository.GetByIdAsync(store.StoreId);
+            if (existing == null)
+                throw new Exception("Store not found");
+
+            if (existing.OwnerId != ownerId)
+                throw new UnauthorizedAccessException("Access denied: user is not the owner of this store");
+
+            var model = StoreMapper.ToUpdateModel(store, ownerId);
+            model.Slug = await GenerateSlugAsync(store.StoreId, store.Name);
             return await _storeRepository.UpdateAsync(model);
         }
 

@@ -96,10 +96,10 @@ namespace Lofn.Infra.Repository
             return rows.Select(ProductDbMapper.ToModel);
         }
 
-        public async Task<bool> ExistSlugAsync(long productId, string slug)
+        public async Task<bool> ExistSlugAsync(long storeId, long productId, string slug)
         {
             return await _context.Products
-                .Where(x => x.Slug == slug && (productId == 0 || x.ProductId != productId))
+                .Where(x => x.StoreId == storeId && x.Slug == slug && (productId == 0 || x.ProductId != productId))
                 .AnyAsync();
         }
     }

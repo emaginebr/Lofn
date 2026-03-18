@@ -10,8 +10,9 @@ namespace Lofn.Domain.Interfaces
         Task<IList<StoreInfo>> ListAllAsync();
         Task<IList<StoreInfo>> ListByOwnerAsync(long ownerId);
         Task<StoreModel> GetByIdAsync(long storeId);
-        Task<StoreModel> InsertAsync(StoreInfo store, long ownerId);
-        Task<StoreModel> UpdateAsync(StoreInfo store);
+        Task<StoreModel> GetBySlugAsync(string slug);
+        Task<StoreModel> InsertAsync(StoreInsertInfo store, long ownerId);
+        Task<StoreModel> UpdateAsync(StoreUpdateInfo store, long ownerId);
         Task DeleteAsync(long storeId);
     }
 }

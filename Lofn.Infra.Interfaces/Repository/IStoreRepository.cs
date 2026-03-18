@@ -8,6 +8,8 @@ namespace Lofn.Infra.Interfaces.Repository
         Task<IEnumerable<TModel>> ListAllAsync();
         Task<IEnumerable<TModel>> ListByOwnerAsync(long ownerId);
         Task<TModel> GetByIdAsync(long id);
+        Task<TModel> GetBySlugAsync(string slug);
+        Task<bool> ExistSlugAsync(long storeId, string slug);
         Task<TModel> InsertAsync(TModel model);
         Task<TModel> UpdateAsync(TModel model);
         Task DeleteAsync(long id);

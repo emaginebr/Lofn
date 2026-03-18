@@ -41,6 +41,23 @@ namespace Lofn.Infra.Repository
             return StoreDbMapper.ToModel(row);
         }
 
+        public async Task<StoreModel> GetBySlugAsync(string slug)
+        {
+            var row = await _context.Stores
+                .Where(x => x.Slug == slug)
+                .FirstOrDefaultAsync();
+            if (row == null)
+                return null;
+            return StoreDbMapper.ToModel(row);
+        }
+
+        public async Task<bool> ExistSlugAsync(long storeId, string slug)
+        {
+            return await _context.Stores
+                .Where(x => x.Slug == slug && (storeId == 0 || x.StoreId != storeId))
+                .AnyAsync();
+        }
+
         public async Task<StoreModel> InsertAsync(StoreModel model)
         {
             var row = new Store();

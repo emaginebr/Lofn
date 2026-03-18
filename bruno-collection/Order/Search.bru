@@ -1,0 +1,24 @@
+meta {
+  name: Search
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/order/search
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "storeId": 1,
+    "userId": null,
+    "sellerId": null,
+    "pageNum": 1
+  }
+}

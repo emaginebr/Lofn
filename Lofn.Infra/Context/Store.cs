@@ -7,6 +7,8 @@ public partial class Store
 {
     public long StoreId { get; set; }
 
+    public string Slug { get; set; }
+
     public string Name { get; set; }
 
     public long OwnerId { get; set; }

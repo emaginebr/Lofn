@@ -10,9 +10,10 @@ namespace Lofn.Domain.Interfaces
         Task<ProductListPagedResult> SearchAsync(ProductSearchInternalParam param);
         Task<IList<ProductModel>> ListByStoreAsync(long storeId);
         Task<ProductModel> GetByIdAsync(long productId);
+        Task<ProductModel> GetByIdAsync(long productId, long storeId, long userId);
         Task<ProductModel> GetBySlugAsync(string productSlug);
         Task<ProductInfo> GetProductInfoAsync(ProductModel product);
-        Task<ProductModel> InsertAsync(ProductInfo product, long userId);
-        Task<ProductModel> UpdateAsync(ProductInfo product, long userId);
+        Task<ProductModel> InsertAsync(ProductInsertInfo product, long storeId, long userId);
+        Task<ProductModel> UpdateAsync(ProductUpdateInfo product, long storeId, long userId);
     }
 }

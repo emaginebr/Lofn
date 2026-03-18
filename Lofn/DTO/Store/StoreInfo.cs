@@ -6,6 +6,8 @@ namespace Lofn.DTO.Store
     {
         [JsonPropertyName("storeId")]
         public long StoreId { get; set; }
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("ownerId")]

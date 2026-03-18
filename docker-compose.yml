@@ -11,9 +11,10 @@ services:
       ASPNETCORE_URLS: http://+:8080
       Tenants__monexup__ConnectionString: ${MONEXUP_CONNECTION_STRING}
       Tenants__monexup__JwtSecret: ${MONEXUP_JWT_SECRET}
-      Lofn__BucketName: ${LOFN_BUCKET_NAME}
+      Tenants__monexup__BucketName: ${LOFN_BUCKET_NAME}
       NAuth__ApiURL: ${NAUTH_API_URL}
       NAuth__BucketName: ${NAUTH_BUCKET_NAME}
+      NAuth__JwtSecret: ${MONEXUP_JWT_SECRET}
       zTools__ApiURL: ${ZTOOLS_API_URL}
     depends_on:
       db:
@@ -45,4 +46,4 @@ volumes:
 
 networks:
   emagine-network:
-    driver: bridge
+    external: true

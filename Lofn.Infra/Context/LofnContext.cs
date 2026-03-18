@@ -151,6 +151,13 @@ public partial class LofnContext : DbContext
             entity.ToTable("stores");
 
             entity.Property(e => e.StoreId).HasColumnName("store_id");
+            entity.Property(e => e.Slug)
+                .IsRequired()
+                .HasMaxLength(120)
+                .HasColumnName("slug");
+            entity.HasIndex(e => e.Slug)
+                .IsUnique()
+                .HasDatabaseName("ix_stores_slug");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(120)

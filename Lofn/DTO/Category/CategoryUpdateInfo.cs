@@ -1,0 +1,12 @@
+using System.Text.Json.Serialization;
+
+namespace Lofn.DTO.Category
+{
+    public class CategoryUpdateInfo
+    {
+        [JsonPropertyName("categoryId")]
+        public long CategoryId { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+    }
+}

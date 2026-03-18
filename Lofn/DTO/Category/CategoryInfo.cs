@@ -11,7 +11,7 @@ namespace Lofn.DTO.Category
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("storeId")]
-        public long? StoreId { get; set; }
+        public long StoreId { get; set; }
         [JsonPropertyName("productCount")]
         public int ProductCount { get; set; }
     }

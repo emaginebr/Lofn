@@ -1,3 +1,4 @@
+using NAuth.DTO.User;
 using System.Text.Json.Serialization;
 
 namespace Lofn.DTO.Store
@@ -10,5 +11,7 @@ namespace Lofn.DTO.Store
         public long StoreId { get; set; }
         [JsonPropertyName("userId")]
         public long UserId { get; set; }
+        [JsonPropertyName("user")]
+        public UserInfo User { get; set; }
     }
 }
