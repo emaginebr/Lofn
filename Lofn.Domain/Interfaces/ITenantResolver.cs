@@ -5,5 +5,6 @@ namespace Lofn.Domain.Interfaces
         string TenantId { get; }
         string ConnectionString { get; }
         string JwtSecret { get; }
+        string BucketName { get; }
     }
 }

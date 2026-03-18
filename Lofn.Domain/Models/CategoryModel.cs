@@ -1,0 +1,10 @@
+namespace Lofn.Domain.Models
+{
+    public class CategoryModel
+    {
+        public long CategoryId { get; set; }
+        public string Slug { get; set; }
+        public string Name { get; set; }
+        public long? StoreId { get; set; }
+    }
+}

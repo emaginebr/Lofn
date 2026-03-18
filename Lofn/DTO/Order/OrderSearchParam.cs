@@ -9,8 +9,8 @@ namespace Lofn.DTO.Order
 {
     public class OrderSearchParam
     {
-        [JsonPropertyName("networkId")]
-        public long NetworkId { get; set; }
+        [JsonPropertyName("storeId")]
+        public long StoreId { get; set; }
         [JsonPropertyName("userId")]
         public long? UserId { get; set; }
         [JsonPropertyName("sellerId")]

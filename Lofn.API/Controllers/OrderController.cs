@@ -34,20 +34,16 @@ namespace Lofn.API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public async Task<ActionResult<OrderResult>> Update([FromBody] OrderInfo order)
+        public async Task<ActionResult<OrderInfo>> Update([FromBody] OrderInfo order)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
+                    return Unauthorized();
+
                 var newOrder = await _orderService.UpdateAsync(order);
-                return new OrderResult()
-                {
-                    Order = await _orderService.GetOrderInfoAsync(newOrder, GetBearerToken())
-                };
+                return Ok(await _orderService.GetOrderInfoAsync(newOrder, GetBearerToken()));
             }
             catch (Exception ex)
             {
@@ -63,10 +59,9 @@ namespace Lofn.API.Controllers
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
-                return await _orderService.SearchAsync(param.NetworkId, param.UserId, param.SellerId, param.PageNum, GetBearerToken());
+                    return Unauthorized();
+
+                return Ok(await _orderService.SearchAsync(param.StoreId, param.UserId, param.SellerId, param.PageNum, GetBearerToken()));
             }
             catch (Exception ex)
             {
@@ -76,27 +71,22 @@ namespace Lofn.API.Controllers
 
         [Authorize]
         [HttpPost("list")]
-        public async Task<ActionResult<OrderListResult>> List([FromBody] OrderParam param)
+        public async Task<ActionResult<IList<OrderInfo>>> List([FromBody] OrderParam param)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
+                    return Unauthorized();
+
                 var token = GetBearerToken();
-                var orders = await _orderService.ListAsync(param.NetworkId, param.UserId, param.Status);
+                var orders = await _orderService.ListAsync(param.StoreId, param.UserId, param.Status);
                 var orderInfos = new List<OrderInfo>();
                 foreach (var x in orders)
                 {
                     orderInfos.Add(await _orderService.GetOrderInfoAsync(x, token));
                 }
-                return new OrderListResult
-                {
-                    Sucesso = true,
-                    Orders = orderInfos
-                };
+                return Ok(orderInfos);
             }
             catch (Exception ex)
             {
@@ -106,21 +96,19 @@ namespace Lofn.API.Controllers
 
         [Authorize]
         [HttpGet("getById/{orderId}")]
-        public async Task<ActionResult<OrderResult>> GetById(long orderId)
+        public async Task<ActionResult<OrderInfo>> GetById(long orderId)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
+                    return Unauthorized();
+
                 var order = await _orderService.GetByIdAsync(orderId);
-                return new OrderResult
-                {
-                    Sucesso = true,
-                    Order = await _orderService.GetOrderInfoAsync(order, GetBearerToken())
-                };
+                if (order == null)
+                    return NotFound();
+
+                return Ok(await _orderService.GetOrderInfoAsync(order, GetBearerToken()));
             }
             catch (Exception ex)
             {

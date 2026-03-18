@@ -1,0 +1,44 @@
+using Lofn.Domain.Models;
+using Lofn.DTO.Product;
+
+namespace Lofn.Domain.Mappers
+{
+    public static class ProductMapper
+    {
+        public static ProductInfo ToInfo(ProductModel md)
+        {
+            return new ProductInfo
+            {
+                ProductId = md.ProductId,
+                StoreId = md.StoreId,
+                CategoryId = md.CategoryId,
+                Name = md.Name,
+                Slug = md.Slug,
+                Image = md.Image,
+                Description = md.Description,
+                Price = md.Price,
+                Frequency = md.Frequency,
+                Limit = md.Limit,
+                Status = md.Status
+            };
+        }
+
+        public static ProductModel ToModel(ProductInfo dto, long userId)
+        {
+            return new ProductModel
+            {
+                ProductId = dto.ProductId,
+                StoreId = dto.StoreId,
+                CategoryId = dto.CategoryId,
+                UserId = userId,
+                Name = dto.Name,
+                Image = dto.Image,
+                Description = dto.Description,
+                Price = dto.Price,
+                Frequency = dto.Frequency,
+                Limit = dto.Limit,
+                Status = dto.Status
+            };
+        }
+    }
+}

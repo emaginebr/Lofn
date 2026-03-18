@@ -17,7 +17,6 @@ using System.Net.Mime;
 using System.Text.Json;
 using System.Threading.Tasks;
 using NAuth.DTO.Settings;
-using Lofn.DTO.Settings;
 using zTools.DTO.Settings;
 
 namespace Lofn.API
@@ -36,7 +35,6 @@ namespace Lofn.API
         {
             services.Configure<NAuthSetting>(Configuration.GetSection("NAuth"));
             services.Configure<zToolsetting>(Configuration.GetSection("zTools"));
-            services.Configure<LofnSetting>(Configuration.GetSection("Lofn"));
 
             services.ConfigureLofn();
             services.AddControllers();

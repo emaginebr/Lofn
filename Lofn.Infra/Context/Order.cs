@@ -17,7 +17,9 @@ public partial class Order
 
     public long? SellerId { get; set; }
 
-    public long? NetworkId { get; set; }
+    public long? StoreId { get; set; }
+
+    public virtual Store Store { get; set; }
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }

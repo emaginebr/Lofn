@@ -5,7 +5,8 @@ namespace Lofn.Domain.Models
     public class ProductModel
     {
         public long ProductId { get; set; }
-        public long? NetworkId { get; set; }
+        public long? StoreId { get; set; }
+        public long? CategoryId { get; set; }
         public long UserId { get; set; }
         public string Slug { get; set; }
         public string Image { get; set; }

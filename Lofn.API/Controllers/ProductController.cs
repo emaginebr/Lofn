@@ -26,20 +26,16 @@ namespace Lofn.API.Controllers
 
         [Authorize]
         [HttpPost("insert")]
-        public async Task<ActionResult<ProductResult>> Insert([FromBody] ProductInfo product)
+        public async Task<ActionResult<ProductInfo>> Insert([FromBody] ProductInfo product)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
+                    return Unauthorized();
+
                 var newProduct = await _productService.InsertAsync(product, userSession.UserId);
-                return new ProductResult()
-                {
-                    Product = await _productService.GetProductInfoAsync(newProduct)
-                };
+                return Ok(await _productService.GetProductInfoAsync(newProduct));
             }
             catch (Exception ex)
             {
@@ -49,20 +45,16 @@ namespace Lofn.API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public async Task<ActionResult<ProductResult>> Update([FromBody] ProductInfo product)
+        public async Task<ActionResult<ProductInfo>> Update([FromBody] ProductInfo product)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
+                    return Unauthorized();
+
                 var newProduct = await _productService.UpdateAsync(product, userSession.UserId);
-                return new ProductResult()
-                {
-                    Product = await _productService.GetProductInfoAsync(newProduct)
-                };
+                return Ok(await _productService.GetProductInfoAsync(newProduct));
             }
             catch (Exception ex)
             {
@@ -79,11 +71,9 @@ namespace Lofn.API.Controllers
                 {
                     var user = await _userClient.GetBySlugAsync(param.UserSlug);
                     if (user != null)
-                    {
                         param.UserId = user.UserId;
-                    }
                 }
-                return await _productService.SearchAsync(param);
+                return Ok(await _productService.SearchAsync(param));
             }
             catch (Exception ex)
             {
@@ -93,21 +83,19 @@ namespace Lofn.API.Controllers
 
         [Authorize]
         [HttpGet("getById/{productId}")]
-        public async Task<ActionResult<ProductResult>> GetById(long productId)
+        public async Task<ActionResult<ProductInfo>> GetById(long productId)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
+                    return Unauthorized();
+
                 var product = await _productService.GetByIdAsync(productId);
-                return new ProductResult
-                {
-                    Sucesso = true,
-                    Product = await _productService.GetProductInfoAsync(product)
-                };
+                if (product == null)
+                    return NotFound();
+
+                return Ok(await _productService.GetProductInfoAsync(product));
             }
             catch (Exception ex)
             {
@@ -116,16 +104,15 @@ namespace Lofn.API.Controllers
         }
 
         [HttpGet("getBySlug/{productSlug}")]
-        public async Task<ActionResult<ProductResult>> GetBySlug(string productSlug)
+        public async Task<ActionResult<ProductInfo>> GetBySlug(string productSlug)
         {
             try
             {
                 var product = await _productService.GetBySlugAsync(productSlug);
-                return new ProductResult
-                {
-                    Sucesso = true,
-                    Product = await _productService.GetProductInfoAsync(product)
-                };
+                if (product == null)
+                    return NotFound();
+
+                return Ok(await _productService.GetProductInfoAsync(product));
             }
             catch (Exception ex)
             {

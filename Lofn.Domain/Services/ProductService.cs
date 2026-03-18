@@ -1,9 +1,8 @@
 using Lofn.Infra.Interfaces.Repository;
-using Microsoft.Extensions.Options;
+using Lofn.Domain.Mappers;
 using Lofn.Domain.Models;
 using Lofn.Domain.Interfaces;
 using Lofn.DTO.Product;
-using Lofn.DTO.Settings;
 using zTools.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,22 +13,25 @@ namespace Lofn.Domain.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IOptions<LofnSetting> _nsalesSettings;
+        private readonly ITenantResolver _tenantResolver;
         private readonly IFileClient _fileClient;
         private readonly IStringClient _stringClient;
         private readonly IProductRepository<ProductModel> _productRepository;
+        private readonly IProductImageService _productImageService;
 
         public ProductService(
-            IOptions<LofnSetting> nsalesSettings,
+            ITenantResolver tenantResolver,
             IFileClient fileClient,
             IStringClient stringClient,
-            IProductRepository<ProductModel> productRepository
+            IProductRepository<ProductModel> productRepository,
+            IProductImageService productImageService
         )
         {
-            _nsalesSettings = nsalesSettings;
+            _tenantResolver = tenantResolver;
             _fileClient = fileClient;
             _stringClient = stringClient;
             _productRepository = productRepository;
+            _productImageService = productImageService;
         }
 
         public async Task<ProductModel> GetByIdAsync(long productId)
@@ -44,20 +46,10 @@ namespace Lofn.Domain.Services
 
         public async Task<ProductInfo> GetProductInfoAsync(ProductModel md)
         {
-            return new ProductInfo
-            {
-                ProductId = md.ProductId,
-                NetworkId = md.NetworkId,
-                Name = md.Name,
-                Slug = md.Slug,
-                Image = md.Image,
-                ImageUrl = await _fileClient.GetFileUrlAsync(_nsalesSettings.Value.BucketName, md.Image),
-                Description = md.Description,
-                Price = md.Price,
-                Frequency = md.Frequency,
-                Limit = md.Limit,
-                Status = md.Status
-            };
+            var info = ProductMapper.ToInfo(md);
+            info.ImageUrl = await _fileClient.GetFileUrlAsync(_tenantResolver.BucketName, md.Image);
+            info.Images = await _productImageService.ListByProductAsync(md.ProductId);
+            return info;
         }
 
         private async Task<string> GenerateSlugAsync(long productId, string slug, string name)
@@ -87,19 +79,8 @@ namespace Lofn.Domain.Services
                 throw new Exception("Price cant be 0");
             }
 
-            var model = new ProductModel
-            {
-                ProductId = product.ProductId,
-                NetworkId = product.NetworkId,
-                UserId = userId,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Frequency = product.Frequency,
-                Limit = product.Limit,
-                Status = product.Status,
-                Slug = await GenerateSlugAsync(product.ProductId, product.Slug, product.Name)
-            };
+            var model = ProductMapper.ToModel(product, userId);
+            model.Slug = await GenerateSlugAsync(product.ProductId, product.Slug, product.Name);
 
             return await _productRepository.InsertAsync(model);
         }
@@ -115,19 +96,8 @@ namespace Lofn.Domain.Services
                 throw new Exception("Price cant be 0");
             }
 
-            var model = new ProductModel
-            {
-                ProductId = product.ProductId,
-                NetworkId = product.NetworkId,
-                Name = product.Name,
-                Image = product.Image,
-                Description = product.Description,
-                Price = product.Price,
-                Frequency = product.Frequency,
-                Limit = product.Limit,
-                Status = product.Status,
-                Slug = await GenerateSlugAsync(product.ProductId, product.Slug, product.Name)
-            };
+            var model = ProductMapper.ToModel(product, userId);
+            model.Slug = await GenerateSlugAsync(product.ProductId, product.Slug, product.Name);
 
             return await _productRepository.UpdateAsync(model);
         }
@@ -135,7 +105,7 @@ namespace Lofn.Domain.Services
         public async Task<ProductListPagedResult> SearchAsync(ProductSearchInternalParam param)
         {
             var (items, pageCount) = await _productRepository.SearchAsync(
-                param.NetworkId <= 0 ? null : param.NetworkId,
+                param.StoreId <= 0 ? null : param.StoreId,
                 param.UserId <= 0 ? null : param.UserId,
                 param.Keyword,
                 param.OnlyActive,
@@ -157,9 +127,9 @@ namespace Lofn.Domain.Services
             };
         }
 
-        public async Task<IList<ProductModel>> ListByNetworkAsync(long networkId)
+        public async Task<IList<ProductModel>> ListByStoreAsync(long storeId)
         {
-            var items = await _productRepository.ListByNetworkAsync(networkId);
+            var items = await _productRepository.ListByStoreAsync(storeId);
             return items.OrderBy(x => x.Price).ToList();
         }
     }

@@ -49,5 +49,18 @@ namespace Lofn.Application
                 return secret;
             }
         }
+
+        public string BucketName
+        {
+            get
+            {
+                var bucket = _configuration[$"Tenants:{TenantId}:BucketName"];
+                if (string.IsNullOrEmpty(bucket))
+                    throw new System.InvalidOperationException(
+                        $"BucketName not found for tenant '{TenantId}'. " +
+                        $"Expected key: Tenants:{TenantId}:BucketName");
+                return bucket;
+            }
+        }
     }
 }

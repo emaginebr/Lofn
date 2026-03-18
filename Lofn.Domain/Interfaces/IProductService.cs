@@ -8,7 +8,7 @@ namespace Lofn.Domain.Interfaces
     public interface IProductService
     {
         Task<ProductListPagedResult> SearchAsync(ProductSearchInternalParam param);
-        Task<IList<ProductModel>> ListByNetworkAsync(long networkId);
+        Task<IList<ProductModel>> ListByStoreAsync(long storeId);
         Task<ProductModel> GetByIdAsync(long productId);
         Task<ProductModel> GetBySlugAsync(string productSlug);
         Task<ProductInfo> GetProductInfoAsync(ProductModel product);

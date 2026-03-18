@@ -6,7 +6,7 @@ namespace Lofn.Domain.Models
     public class OrderModel
     {
         public long OrderId { get; set; }
-        public long? NetworkId { get; set; }
+        public long? StoreId { get; set; }
         public long UserId { get; set; }
         public long? SellerId { get; set; }
         public OrderStatusEnum Status { get; set; }

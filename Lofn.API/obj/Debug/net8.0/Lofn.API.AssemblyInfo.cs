@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Lofn.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f0f71a05d2f39cb68a9ac57273526417178a6032")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+56b8e5656d667f5bf161f183f170f40b69bb9457")]
 [assembly: System.Reflection.AssemblyProductAttribute("Lofn.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Lofn.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

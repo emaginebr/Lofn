@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Lofn.DTO.Product
 {
@@ -11,8 +7,10 @@ namespace Lofn.DTO.Product
     {
         [JsonPropertyName("productId")]
         public long ProductId { get; set; }
-        [JsonPropertyName("networkId")]
-        public long? NetworkId { get; set; }
+        [JsonPropertyName("storeId")]
+        public long? StoreId { get; set; }
+        [JsonPropertyName("categoryId")]
+        public long? CategoryId { get; set; }
         [JsonPropertyName("slug")]
         public string Slug { get; set; }
         [JsonPropertyName("image")]
@@ -31,5 +29,7 @@ namespace Lofn.DTO.Product
         public int Limit { get; set; }
         [JsonPropertyName("status")]
         public ProductStatusEnum Status { get; set; }
+        [JsonPropertyName("images")]
+        public IList<ProductImageInfo> Images { get; set; }
     }
 }

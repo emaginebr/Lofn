@@ -1,5 +1,6 @@
 using Lofn.Infra.Interfaces.Repository;
 using Lofn.Infra.Context;
+using Lofn.Infra.Mappers;
 using Lofn.Domain.Models;
 using Lofn.DTO.Order;
 using Microsoft.EntityFrameworkCore;
@@ -20,34 +21,9 @@ namespace Lofn.Infra.Repository
             _context = context;
         }
 
-        private static OrderModel DbToModel(Order row)
+        public async Task<(IEnumerable<OrderModel> Items, int PageCount)> SearchAsync(long storeId, long? userId, long? sellerId, int pageNum)
         {
-            return new OrderModel
-            {
-                OrderId = row.OrderId,
-                NetworkId = row.NetworkId,
-                UserId = row.UserId,
-                SellerId = row.SellerId,
-                CreatedAt = row.CreatedAt,
-                UpdatedAt = row.UpdatedAt,
-                Status = (OrderStatusEnum)row.Status
-            };
-        }
-
-        private static void ModelToDb(OrderModel md, Order row)
-        {
-            row.OrderId = md.OrderId;
-            row.NetworkId = md.NetworkId;
-            row.UserId = md.UserId;
-            row.SellerId = md.SellerId;
-            row.CreatedAt = md.CreatedAt;
-            row.UpdatedAt = md.UpdatedAt;
-            row.Status = (int)md.Status;
-        }
-
-        public async Task<(IEnumerable<OrderModel> Items, int PageCount)> SearchAsync(long networkId, long? userId, long? sellerId, int pageNum)
-        {
-            var q = _context.Orders.Where(x => x.NetworkId == networkId);
+            var q = _context.Orders.Where(x => x.StoreId == storeId);
             if (userId.HasValue && userId.Value > 0)
             {
                 q = q.Where(x => x.UserId == userId.Value);
@@ -62,13 +38,13 @@ namespace Lofn.Infra.Repository
                 .Skip((pageNum - 1) * PAGE_SIZE)
                 .Take(PAGE_SIZE)
                 .ToListAsync();
-            return (rows.Select(DbToModel), pageCount);
+            return (rows.Select(OrderDbMapper.ToModel), pageCount);
         }
 
         public async Task<OrderModel> InsertAsync(OrderModel model)
         {
             var row = new Order();
-            ModelToDb(model, row);
+            OrderDbMapper.ToEntity(model, row);
             row.CreatedAt = DateTime.Now;
             row.UpdatedAt = DateTime.Now;
             _context.Add(row);
@@ -80,19 +56,19 @@ namespace Lofn.Infra.Repository
         public async Task<OrderModel> UpdateAsync(OrderModel model)
         {
             var row = await _context.Orders.FindAsync(model.OrderId);
-            ModelToDb(model, row);
+            OrderDbMapper.ToEntity(model, row);
             row.UpdatedAt = DateTime.Now;
             _context.Orders.Update(row);
             await _context.SaveChangesAsync();
             return model;
         }
 
-        public async Task<IEnumerable<OrderModel>> ListAsync(long networkId, long userId, int status)
+        public async Task<IEnumerable<OrderModel>> ListAsync(long storeId, long userId, int status)
         {
             var q = _context.Orders.AsQueryable();
-            if (networkId > 0)
+            if (storeId > 0)
             {
-                q = q.Where(x => x.NetworkId == networkId);
+                q = q.Where(x => x.StoreId == storeId);
             }
             if (userId > 0)
             {
@@ -103,7 +79,7 @@ namespace Lofn.Infra.Repository
                 q = q.Where(x => x.Status == status);
             }
             var rows = await q.ToListAsync();
-            return rows.Select(DbToModel);
+            return rows.Select(OrderDbMapper.ToModel);
         }
 
         public async Task<OrderModel> GetByIdAsync(long id)
@@ -111,7 +87,7 @@ namespace Lofn.Infra.Repository
             var row = await _context.Orders.FindAsync(id);
             if (row == null)
                 return null;
-            return DbToModel(row);
+            return OrderDbMapper.ToModel(row);
         }
 
         public async Task<OrderModel> GetAsync(long productId, long userId, long? sellerId, int status)
@@ -126,7 +102,7 @@ namespace Lofn.Infra.Repository
             var row = await q.FirstOrDefaultAsync();
             if (row == null)
                 return null;
-            return DbToModel(row);
+            return OrderDbMapper.ToModel(row);
         }
     }
 }

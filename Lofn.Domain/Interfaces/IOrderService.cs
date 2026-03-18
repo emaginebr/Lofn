@@ -7,8 +7,8 @@ namespace Lofn.Domain.Interfaces
 {
     public interface IOrderService
     {
-        Task<IList<OrderModel>> ListAsync(long networkId, long userId, OrderStatusEnum? status);
-        Task<OrderListPagedResult> SearchAsync(long networkId, long? userId, long? sellerId, int pageNum, string token);
+        Task<IList<OrderModel>> ListAsync(long storeId, long userId, OrderStatusEnum? status);
+        Task<OrderListPagedResult> SearchAsync(long storeId, long? userId, long? sellerId, int pageNum, string token);
         Task<OrderModel> GetByIdAsync(long orderId);
         Task<OrderModel> GetAsync(long productId, long userId, long? sellerId, OrderStatusEnum status);
         Task<OrderInfo> GetOrderInfoAsync(OrderModel order, string token);

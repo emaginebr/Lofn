@@ -6,7 +6,8 @@
       "Bash(dotnet remove:*)",
       "Bash(dotnet add:*)",
       "Bash(dotnet restore:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(openssl rand:*)"
     ]
   }
 }

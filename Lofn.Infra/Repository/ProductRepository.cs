@@ -1,5 +1,6 @@
 using Lofn.Infra.Interfaces.Repository;
 using Lofn.Infra.Context;
+using Lofn.Infra.Mappers;
 using Lofn.Domain.Models;
 using Lofn.DTO.Product;
 using Microsoft.EntityFrameworkCore;
@@ -21,43 +22,10 @@ namespace Lofn.Infra.Repository
             _context = context;
         }
 
-        private static ProductModel DbToModel(Product row)
-        {
-            return new ProductModel
-            {
-                ProductId = row.ProductId,
-                UserId = row.UserId,
-                NetworkId = row.NetworkId,
-                Name = row.Name,
-                Slug = row.Slug,
-                Image = row.Image,
-                Description = row.Description,
-                Price = row.Price,
-                Frequency = row.Frequency,
-                Limit = row.Limit,
-                Status = (ProductStatusEnum)row.Status
-            };
-        }
-
-        private static void ModelToDb(ProductModel md, Product row)
-        {
-            row.ProductId = md.ProductId;
-            row.UserId = md.UserId;
-            row.NetworkId = md.NetworkId;
-            row.Name = md.Name;
-            row.Slug = md.Slug;
-            row.Image = md.Image;
-            row.Description = md.Description;
-            row.Price = md.Price;
-            row.Frequency = md.Frequency;
-            row.Limit = md.Limit;
-            row.Status = (int)md.Status;
-        }
-
         public async Task<ProductModel> InsertAsync(ProductModel model)
         {
             var row = new Product();
-            ModelToDb(model, row);
+            ProductDbMapper.ToEntity(model, row);
             _context.Add(row);
             await _context.SaveChangesAsync();
             model.ProductId = row.ProductId;
@@ -67,7 +35,7 @@ namespace Lofn.Infra.Repository
         public async Task<ProductModel> UpdateAsync(ProductModel model)
         {
             var row = await _context.Products.FindAsync(model.ProductId);
-            ModelToDb(model, row);
+            ProductDbMapper.ToEntity(model, row);
             _context.Products.Update(row);
             await _context.SaveChangesAsync();
             return model;
@@ -78,7 +46,7 @@ namespace Lofn.Infra.Repository
             var row = await _context.Products.FindAsync(id);
             if (row == null)
                 return null;
-            return DbToModel(row);
+            return ProductDbMapper.ToModel(row);
         }
 
         public async Task<ProductModel> GetBySlugAsync(string slug)
@@ -88,10 +56,10 @@ namespace Lofn.Infra.Repository
                 .FirstOrDefaultAsync();
             if (row == null)
                 return null;
-            return DbToModel(row);
+            return ProductDbMapper.ToModel(row);
         }
 
-        public async Task<(IEnumerable<ProductModel> Items, int PageCount)> SearchAsync(long? networkId, long? userId, string keyword, bool active, int pageNum)
+        public async Task<(IEnumerable<ProductModel> Items, int PageCount)> SearchAsync(long? storeId, long? userId, string keyword, bool active, int pageNum)
         {
             var q = _context.Products.AsQueryable();
             if (active)
@@ -102,9 +70,9 @@ namespace Lofn.Infra.Repository
             {
                 q = q.Where(x => x.UserId == userId.Value);
             }
-            if (networkId.HasValue && networkId.Value > 0)
+            if (storeId.HasValue && storeId.Value > 0)
             {
-                q = q.Where(x => x.NetworkId == networkId);
+                q = q.Where(x => x.StoreId == storeId);
             }
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -117,15 +85,15 @@ namespace Lofn.Infra.Repository
                 .Skip((pageNum - 1) * PAGE_SIZE)
                 .Take(PAGE_SIZE)
                 .ToListAsync();
-            return (rows.Select(DbToModel), pageCount);
+            return (rows.Select(ProductDbMapper.ToModel), pageCount);
         }
 
-        public async Task<IEnumerable<ProductModel>> ListByNetworkAsync(long networkId)
+        public async Task<IEnumerable<ProductModel>> ListByStoreAsync(long storeId)
         {
             var rows = await _context.Products
-                .Where(x => x.NetworkId == networkId)
+                .Where(x => x.StoreId == storeId)
                 .ToListAsync();
-            return rows.Select(DbToModel);
+            return rows.Select(ProductDbMapper.ToModel);
         }
 
         public async Task<bool> ExistSlugAsync(long productId, string slug)

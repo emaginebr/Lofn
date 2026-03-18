@@ -51,6 +51,10 @@ namespace Lofn.Application
             injectDependency(typeof(IOrderRepository<OrderModel>), typeof(OrderRepository), services, scoped);
             injectDependency(typeof(IOrderItemRepository<OrderItemModel>), typeof(OrderItemRepository), services, scoped);
             injectDependency(typeof(IProductRepository<ProductModel>), typeof(ProductRepository), services, scoped);
+            injectDependency(typeof(IProductImageRepository<ProductImageModel>), typeof(ProductImageRepository), services, scoped);
+            injectDependency(typeof(ICategoryRepository<CategoryModel>), typeof(CategoryRepository), services, scoped);
+            injectDependency(typeof(IStoreRepository<StoreModel>), typeof(StoreRepository), services, scoped);
+            injectDependency(typeof(IStoreUserRepository<StoreUserModel>), typeof(StoreUserRepository), services, scoped);
             #endregion
 
             #region Client
@@ -65,6 +69,9 @@ namespace Lofn.Application
 
             #region Service
             injectDependency(typeof(IProductService), typeof(ProductService), services, scoped);
+            injectDependency(typeof(IProductImageService), typeof(ProductImageService), services, scoped);
+            injectDependency(typeof(ICategoryService), typeof(CategoryService), services, scoped);
+            injectDependency(typeof(IStoreService), typeof(StoreService), services, scoped);
             injectDependency(typeof(IOrderService), typeof(OrderService), services, scoped);
             #endregion
 
