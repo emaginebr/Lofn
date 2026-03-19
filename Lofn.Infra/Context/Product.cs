@@ -15,6 +15,8 @@ public partial class Product
 
     public double Price { get; set; }
 
+    public double Discount { get; set; }
+
     public int Frequency { get; set; }
 
     public int Limit { get; set; }
@@ -38,8 +40,6 @@ public partial class Product
     public virtual Store Store { get; set; }
 
     public virtual Category Category { get; set; }
-
-    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
 }

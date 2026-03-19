@@ -50,8 +50,6 @@ namespace Lofn.Application
             #endregion
 
             #region Repository
-            injectDependency(typeof(IOrderRepository<OrderModel>), typeof(OrderRepository), services, scoped);
-            injectDependency(typeof(IOrderItemRepository<OrderItemModel>), typeof(OrderItemRepository), services, scoped);
             injectDependency(typeof(IProductRepository<ProductModel>), typeof(ProductRepository), services, scoped);
             injectDependency(typeof(IProductImageRepository<ProductImageModel>), typeof(ProductImageRepository), services, scoped);
             injectDependency(typeof(ICategoryRepository<CategoryModel>), typeof(CategoryRepository), services, scoped);
@@ -70,7 +68,6 @@ namespace Lofn.Application
             injectDependency(typeof(IProductClient), typeof(ProductClient), services, scoped);
             injectDependency(typeof(IStoreClient), typeof(StoreClient), services, scoped);
             injectDependency(typeof(ICategoryClient), typeof(CategoryClient), services, scoped);
-            injectDependency(typeof(IOrderClient), typeof(OrderClient), services, scoped);
             injectDependency(typeof(IStoreUserClient), typeof(StoreUserClient), services, scoped);
             injectDependency(typeof(IImageClient), typeof(ImageClient), services, scoped);
             #endregion
@@ -81,7 +78,6 @@ namespace Lofn.Application
             injectDependency(typeof(ICategoryService), typeof(CategoryService), services, scoped);
             injectDependency(typeof(IStoreService), typeof(StoreService), services, scoped);
             injectDependency(typeof(IStoreUserService), typeof(StoreUserService), services, scoped);
-            injectDependency(typeof(IOrderService), typeof(OrderService), services, scoped);
             #endregion
 
             services.AddAuthentication("BasicAuthentication")

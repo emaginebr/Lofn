@@ -21,7 +21,5 @@ public partial class Store
 
     public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
-
     public virtual ICollection<StoreUser> StoreUsers { get; set; } = new List<StoreUser>();
 }

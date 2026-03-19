@@ -9,6 +9,5 @@ public class PublicStoreType : ObjectType<Store>
     {
         descriptor.Ignore(s => s.StoreUsers);
         descriptor.Ignore(s => s.OwnerId);
-        descriptor.Ignore(s => s.Orders);
     }
 }

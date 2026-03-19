@@ -37,6 +37,7 @@ CREATE TABLE products (
     slug VARCHAR(120) NOT NULL,
     name VARCHAR(120) NOT NULL,
     price DOUBLE PRECISION NOT NULL,
+    discount DOUBLE PRECISION NOT NULL DEFAULT 0,
     frequency INTEGER NOT NULL,
     "limit" INTEGER NOT NULL,
     status INTEGER NOT NULL,

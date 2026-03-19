@@ -119,6 +119,7 @@ namespace Lofn.Domain.Services
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
+                Discount = product.Discount,
                 Frequency = product.Frequency,
                 Limit = product.Limit,
                 Status = product.Status,
@@ -152,6 +153,7 @@ namespace Lofn.Domain.Services
             existing.Name = product.Name;
             existing.Description = product.Description;
             existing.Price = product.Price;
+            existing.Discount = product.Discount;
             existing.Frequency = product.Frequency;
             existing.Limit = product.Limit;
             existing.Status = product.Status;

@@ -14,6 +14,7 @@ namespace Lofn.Domain.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public double Price { get; set; }
+        public double Discount { get; set; }
         public int Frequency { get; set; }
         public int Limit { get; set; }
         public ProductStatusEnum Status { get; set; }

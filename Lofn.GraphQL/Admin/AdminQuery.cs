@@ -56,15 +56,4 @@ public class AdminQuery
         return context.Categories.Where(c => c.StoreId.HasValue && storeIds.Contains(c.StoreId.Value));
     }
 
-    [UseProjection]
-    [UseFiltering]
-    [UseSorting]
-    public IQueryable<Order> GetMyOrders(
-        LofnContext context,
-        IHttpContextAccessor httpContextAccessor,
-        [Service] IUserClient userClient)
-    {
-        var storeIds = GetUserStoreIds(context, httpContextAccessor, userClient);
-        return context.Orders.Where(o => o.StoreId.HasValue && storeIds.Contains(o.StoreId.Value));
-    }
 }

@@ -24,6 +24,8 @@ namespace Lofn.DTO.Product
         public string Description { get; set; }
         [JsonPropertyName("price")]
         public double Price { get; set; }
+        [JsonPropertyName("discount")]
+        public double Discount { get; set; }
         [JsonPropertyName("frequency")]
         public int Frequency { get; set; }
         [JsonPropertyName("limit")]
