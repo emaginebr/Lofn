@@ -19,7 +19,10 @@ namespace Lofn.Domain.Mappers
                 Price = md.Price,
                 Frequency = md.Frequency,
                 Limit = md.Limit,
-                Status = md.Status
+                Status = md.Status,
+                Featured = md.Featured,
+                CreatedAt = md.CreatedAt,
+                UpdatedAt = md.UpdatedAt
             };
         }
 
@@ -37,7 +40,8 @@ namespace Lofn.Domain.Mappers
                 Price = dto.Price,
                 Frequency = dto.Frequency,
                 Limit = dto.Limit,
-                Status = dto.Status
+                Status = dto.Status,
+                Featured = dto.Featured
             };
         }
     }

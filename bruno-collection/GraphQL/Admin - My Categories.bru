@@ -1,0 +1,35 @@
+meta {
+  name: Admin - My Categories
+  type: graphql
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/graphql/admin
+  body: graphql
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:graphql {
+  {
+    myCategories {
+      categoryId
+      name
+      slug
+      store {
+        storeId
+        name
+      }
+      products {
+        productId
+        name
+        price
+        status
+      }
+    }
+  }
+}

@@ -114,6 +114,15 @@ public partial class LofnContext : DbContext
             entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
+            entity.Property(e => e.Featured)
+                .HasDefaultValue(false)
+                .HasColumnName("featured");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("updated_at");
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)

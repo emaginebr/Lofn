@@ -60,12 +60,21 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 - **Params:** `storeSlug` (string), `productId` (long)
 - **Response:** `ProductInfo`
 
-#### GET `/{storeSlug}/category/{categorySlug}/listActive` — Listar produtos ativos por categoria (público)
+#### GET `/{storeSlug}/featured` — Listar produtos em destaque (público)
 
 - **Auth:** Público
-- **Params:** `storeSlug` (string), `categorySlug` (string)
+- **Params:** `storeSlug` (string)
+- **Query:** `limit` (int, opcional, default: 10)
 - **Response:** `IList<ProductInfo>`
-- **Descrição:** Retorna todos os produtos ativos de uma categoria (pelo slug), filtrado pelo slug da loja
+- **Descrição:** Retorna produtos ativos com `featured = true`, filtrado pelo slug da loja. Limitado pela query `limit`. Ordenado por nome
+
+#### GET `/{storeSlug}/listActive` — Listar produtos ativos da loja (público, paginado)
+
+- **Auth:** Público
+- **Params:** `storeSlug` (string)
+- **Query:** `categorySlug` (string, opcional), `pageNum` (int, opcional, default: 1)
+- **Response:** `ProductListPagedResult`
+- **Descrição:** Retorna produtos ativos da loja, paginados. Se `categorySlug` for informado, filtra pela categoria. Ordenado por nome
 
 #### GET `/getBySlug/{productSlug}` — Obter produto por slug
 
@@ -282,6 +291,9 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 | `frequency` | `int` | Frequência (em dias) |
 | `limit` | `int` | Limite de unidades |
 | `status` | `ProductStatusEnum` | Status do produto |
+| `featured` | `bool` | Produto em destaque |
+| `createdAt` | `DateTime` | Data de criação |
+| `updatedAt` | `DateTime` | Data da última atualização |
 | `images` | `ProductImageInfo[]` | Lista de imagens do produto |
 
 #### ProductInsertInfo
@@ -295,6 +307,7 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 | `frequency` | `int` | Frequência (em dias) |
 | `limit` | `int` | Limite de unidades |
 | `status` | `ProductStatusEnum` | Status |
+| `featured` | `bool` | Em destaque |
 
 #### ProductUpdateInfo
 
@@ -308,6 +321,7 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 | `frequency` | `int` | Frequência |
 | `limit` | `int` | Limite |
 | `status` | `ProductStatusEnum` | Status |
+| `featured` | `bool` | Em destaque |
 
 #### ProductImageInfo
 
@@ -518,6 +532,137 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 
 ---
 
+## GraphQL API
+
+A API expõe dois endpoints GraphQL via HotChocolate, ambos com suporte a **projection**, **filtering** e **sorting**.
+
+### Endpoint Público: `/graphql`
+
+Playground interativo (Banana Cake Pop) disponível em `https://localhost:44374/graphql/`.
+
+Não requer autenticação. Expõe apenas dados ativos/públicos.
+
+#### Queries disponíveis
+
+| Query | Retorno | Descrição |
+|-------|---------|-----------|
+| `stores` | `[Store]` | Lojas ativas (`status = 1`) |
+| `products` | `[Product]` | Produtos ativos (`status = 1`) |
+| `categories` | `[Category]` | Categorias que possuem pelo menos 1 produto ativo |
+| `storeBySlug(slug: String!)` | `[Store]` | Loja ativa pelo slug |
+| `featuredProducts(storeSlug: String!)` | `[Product]` | Produtos ativos e em destaque da loja |
+
+#### Campos ocultos no schema público
+
+O tipo `Store` no endpoint público **não expõe**: `storeUsers`, `ownerId`, `orders`.
+
+#### Exemplo
+
+```graphql
+{
+  stores {
+    storeId
+    name
+    slug
+    products {
+      productId
+      name
+      price
+    }
+  }
+}
+```
+
+---
+
+### Endpoint Autenticado: `/graphql/admin`
+
+Requer Bearer Token via header `Authorization`. Retorna `401` se ausente ou inválido.
+
+Todas as queries são filtradas automaticamente pelas lojas vinculadas ao usuário autenticado via `store_users`.
+
+#### Queries disponíveis
+
+| Query | Retorno | Descrição |
+|-------|---------|-----------|
+| `myStores` | `[Store]` | Todas as lojas do usuário (qualquer status) |
+| `myProducts` | `[Product]` | Todos os produtos das lojas do usuário (qualquer status) |
+| `myCategories` | `[Category]` | Todas as categorias das lojas do usuário |
+| `myOrders` | `[Order]` | Todos os pedidos das lojas do usuário |
+
+#### Exemplo
+
+```graphql
+{
+  myStores {
+    storeId
+    name
+    products {
+      productId
+      name
+      price
+      status
+    }
+    orders {
+      orderId
+      status
+      orderItems {
+        quantity
+        product {
+          name
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+### Tipos GraphQL
+
+Os tipos GraphQL mapeiam diretamente as entidades do banco de dados, com as navigation properties disponíveis para consulta em profundidade:
+
+| Tipo | Campos principais | Relações navegáveis |
+|------|-------------------|---------------------|
+| `Store` | `storeId`, `slug`, `name`, `logo`, `status` | `products`, `categories`, `orders`*, `storeUsers`* |
+| `Product` | `productId`, `slug`, `name`, `price`, `status`, `featured`, `description` | `store`, `category`, `productImages`, `orderItems` |
+| `Category` | `categoryId`, `slug`, `name` | `store`, `products` |
+| `Order` | `orderId`, `userId`, `status`, `createdAt` | `store`, `orderItems` |
+| `OrderItem` | `itemId`, `quantity` | `order`, `product` |
+| `ProductImage` | `imageId`, `image`, `sortOrder` | `product` |
+| `StoreUser` | `storeUserId`, `storeId`, `userId` | `store` |
+
+> \* `orders`, `storeUsers` e `ownerId` são **ocultos** no schema público (`/graphql`), visíveis apenas no admin (`/graphql/admin`).
+
+### Filtering e Sorting
+
+Todos os campos escalares suportam filtering e sorting via argumentos gerados automaticamente pelo HotChocolate.
+
+**Exemplo de filtering:**
+```graphql
+{
+  products(where: { price: { gte: 10 }, name: { contains: "premium" } }) {
+    productId
+    name
+    price
+  }
+}
+```
+
+**Exemplo de sorting:**
+```graphql
+{
+  products(order: { price: DESC }) {
+    productId
+    name
+    price
+  }
+}
+```
+
+---
+
 ## Referências Externas
 
 ### UserInfo (NAuth.DTO)
@@ -536,8 +681,10 @@ DTO externo do pacote NAuth, referenciado em `OrderInfo.User`, `OrderInfo.Seller
 | **Order** | 4 | 7 (inclui enums e params) |
 | **Store** | 7 | 4 (inclui enum) |
 | **StoreUser** | 3 | 2 |
-| **Total** | **25** | **25** |
+| **GraphQL** | 2 endpoints | 7 tipos |
+| **Total** | **27** | **32** |
 
-- **Endpoints públicos:** `POST /product/search`, `GET /product/getBySlug/{slug}`, `GET /store/listActive`, `GET /store/getBySlug/{storeSlug}`, `GET /category/{storeSlug}/listActive`, `GET /category/{storeSlug}/getBySlug/{categorySlug}`, `GET /product/{storeSlug}/category/{categorySlug}/listActive`
+- **Endpoints públicos REST:** `POST /product/search`, `GET /product/getBySlug/{slug}`, `GET /store/listActive`, `GET /store/getBySlug/{storeSlug}`, `GET /category/{storeSlug}/listActive`, `GET /category/{storeSlug}/getBySlug/{categorySlug}`, `GET /product/{storeSlug}/featured`, `GET /product/{storeSlug}/listActive`
+- **Endpoints GraphQL:** `/graphql` (público), `/graphql/admin` (autenticado)
 - **Todos os demais requerem Bearer Token**
 - **Serialização JSON:** propriedades em `camelCase` via `[JsonPropertyName]`

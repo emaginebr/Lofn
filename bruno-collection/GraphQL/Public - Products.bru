@@ -1,0 +1,39 @@
+meta {
+  name: Public - Products
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  {
+    products {
+      productId
+      name
+      slug
+      price
+      description
+      featured
+      status
+      productImages {
+        imageId
+        image
+        sortOrder
+      }
+      category {
+        categoryId
+        name
+      }
+      store {
+        storeId
+        name
+        slug
+      }
+    }
+  }
+}

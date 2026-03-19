@@ -1,0 +1,40 @@
+meta {
+  name: Admin - My Orders
+  type: graphql
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/graphql/admin
+  body: graphql
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:graphql {
+  {
+    myOrders {
+      orderId
+      userId
+      status
+      createdAt
+      updatedAt
+      store {
+        storeId
+        name
+      }
+      orderItems {
+        itemId
+        quantity
+        product {
+          productId
+          name
+          price
+        }
+      }
+    }
+  }
+}

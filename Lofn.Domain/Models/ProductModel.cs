@@ -1,4 +1,5 @@
 using Lofn.DTO.Product;
+using System;
 
 namespace Lofn.Domain.Models
 {
@@ -16,6 +17,9 @@ namespace Lofn.Domain.Models
         public int Frequency { get; set; }
         public int Limit { get; set; }
         public ProductStatusEnum Status { get; set; }
+        public bool Featured { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public string StripeProductId { get; set; }
         public string StripePriceId { get; set; }
     }

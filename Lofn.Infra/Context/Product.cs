@@ -29,6 +29,12 @@ public partial class Product
 
     public long? CategoryId { get; set; }
 
+    public bool Featured { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
+
     public virtual Store Store { get; set; }
 
     public virtual Category Category { get; set; }

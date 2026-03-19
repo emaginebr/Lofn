@@ -9,7 +9,8 @@ namespace Lofn.ACL.Interfaces
         Task<ProductListPagedInfo> SearchAsync(ProductSearchParam param);
         Task<ProductInfo> GetByIdAsync(string storeSlug, long productId);
         Task<ProductInfo> GetBySlugAsync(string productSlug);
-        Task<IList<ProductInfo>> ListActiveByCategoryAsync(string storeSlug, string categorySlug);
+        Task<ProductListPagedResult> ListActiveAsync(string storeSlug, string categorySlug = null, int pageNum = 1);
+        Task<IList<ProductInfo>> ListFeaturedAsync(string storeSlug, int limit = 10);
         Task<ProductInfo> InsertAsync(string storeSlug, ProductInsertInfo product);
         Task<ProductInfo> UpdateAsync(string storeSlug, ProductUpdateInfo product);
     }

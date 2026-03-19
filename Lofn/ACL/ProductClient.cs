@@ -38,9 +38,19 @@ namespace Lofn.ACL
             return JsonConvert.DeserializeObject<ProductInfo>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<IList<ProductInfo>> ListActiveByCategoryAsync(string storeSlug, string categorySlug)
+        public async Task<ProductListPagedResult> ListActiveAsync(string storeSlug, string categorySlug = null, int pageNum = 1)
         {
-            var response = await _httpClient.GetAsync($"{_nsalesSetting.Value.ApiUrl}/Product/{storeSlug}/category/{categorySlug}/listActive");
+            var url = $"{_nsalesSetting.Value.ApiUrl}/Product/{storeSlug}/listActive?pageNum={pageNum}";
+            if (!string.IsNullOrEmpty(categorySlug))
+                url += $"&categorySlug={categorySlug}";
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<ProductListPagedResult>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<IList<ProductInfo>> ListFeaturedAsync(string storeSlug, int limit = 10)
+        {
+            var response = await _httpClient.GetAsync($"{_nsalesSetting.Value.ApiUrl}/Product/{storeSlug}/featured?limit={limit}");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<IList<ProductInfo>>(await response.Content.ReadAsStringAsync());
         }

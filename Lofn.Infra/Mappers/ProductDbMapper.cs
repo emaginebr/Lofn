@@ -21,7 +21,10 @@ namespace Lofn.Infra.Mappers
                 Frequency = row.Frequency,
                 Limit = row.Limit,
                 Status = (ProductStatusEnum)row.Status,
-                CategoryId = row.CategoryId
+                CategoryId = row.CategoryId,
+                Featured = row.Featured,
+                CreatedAt = row.CreatedAt,
+                UpdatedAt = row.UpdatedAt
             };
         }
 
@@ -39,6 +42,9 @@ namespace Lofn.Infra.Mappers
             row.Limit = md.Limit;
             row.Status = (int)md.Status;
             row.CategoryId = md.CategoryId;
+            row.Featured = md.Featured;
+            row.CreatedAt = md.CreatedAt;
+            row.UpdatedAt = md.UpdatedAt;
         }
     }
 }

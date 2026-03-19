@@ -131,12 +131,25 @@ namespace Lofn.API.Controllers
             }
         }
 
-        [HttpGet("{storeSlug}/category/{categorySlug}/listActive")]
-        public async Task<ActionResult<IList<ProductInfo>>> ListActiveByCategory(string storeSlug, string categorySlug)
+        [HttpGet("{storeSlug}/featured")]
+        public async Task<ActionResult<IList<ProductInfo>>> ListFeatured(string storeSlug, [FromQuery] int limit = 10)
         {
             try
             {
-                return Ok(await _productService.ListActiveByCategorySlugAsync(storeSlug, categorySlug));
+                return Ok(await _productService.ListFeaturedByStoreSlugAsync(storeSlug, limit));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{storeSlug}/listActive")]
+        public async Task<ActionResult<ProductListPagedResult>> ListActive(string storeSlug, [FromQuery] string categorySlug = null, [FromQuery] int pageNum = 1)
+        {
+            try
+            {
+                return Ok(await _productService.ListActiveByStoreSlugAsync(storeSlug, categorySlug, pageNum));
             }
             catch (Exception ex)
             {

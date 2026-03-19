@@ -18,5 +18,7 @@ namespace Lofn.DTO.Product
         public int Limit { get; set; }
         [JsonPropertyName("status")]
         public ProductStatusEnum Status { get; set; }
+        [JsonPropertyName("featured")]
+        public bool Featured { get; set; }
     }
 }

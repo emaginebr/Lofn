@@ -4,10 +4,15 @@
 
 CREATE TABLE stores (
     store_id BIGSERIAL NOT NULL,
+    slug VARCHAR(120) NOT NULL,
     name VARCHAR(120) NOT NULL,
     owner_id BIGINT NOT NULL,
+    logo VARCHAR(150),
+    status INTEGER NOT NULL DEFAULT 1,
     CONSTRAINT stores_pkey PRIMARY KEY (store_id)
 );
+
+CREATE UNIQUE INDEX ix_stores_slug ON stores (slug);
 
 CREATE TABLE store_users (
     store_user_id BIGSERIAL NOT NULL,
@@ -39,6 +44,9 @@ CREATE TABLE products (
     image VARCHAR(150),
     store_id BIGINT,
     category_id BIGINT,
+    featured BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     CONSTRAINT products_pkey PRIMARY KEY (product_id),
     CONSTRAINT fk_product_store FOREIGN KEY (store_id) REFERENCES stores (store_id),
     CONSTRAINT fk_product_category FOREIGN KEY (category_id) REFERENCES categories (category_id)

@@ -103,12 +103,32 @@ namespace Lofn.Infra.Repository
                 .AnyAsync();
         }
 
-        public async Task<IEnumerable<ProductModel>> ListActiveByCategoryAndStoreAsync(long categoryId, long storeId)
+        public async Task<(IEnumerable<ProductModel> Items, int PageCount)> ListActiveByStoreAsync(long storeId, long? categoryId, int pageNum)
+        {
+            var q = _context.Products
+                .Where(x => x.StoreId == storeId && x.Status == STATUS_ACTIVE);
+
+            if (categoryId.HasValue)
+                q = q.Where(x => x.CategoryId == categoryId.Value);
+
+            var totalCount = await q.CountAsync();
+            var pageCount = (int)Math.Ceiling((double)totalCount / PAGE_SIZE);
+
+            var rows = await q
+                .OrderBy(x => x.Name)
+                .Skip((pageNum - 1) * PAGE_SIZE)
+                .Take(PAGE_SIZE)
+                .ToListAsync();
+
+            return (rows.Select(ProductDbMapper.ToModel), pageCount);
+        }
+
+        public async Task<IEnumerable<ProductModel>> ListFeaturedByStoreAsync(long storeId, int limit)
         {
             var rows = await _context.Products
-                .Where(x => x.StoreId == storeId && x.CategoryId == categoryId && x.Status == STATUS_ACTIVE)
-                .OrderBy(x => x.Frequency)
-                .ThenBy(x => x.Price)
+                .Where(x => x.StoreId == storeId && x.Status == STATUS_ACTIVE && x.Featured)
+                .OrderBy(x => x.Name)
+                .Take(limit)
                 .ToListAsync();
             return rows.Select(ProductDbMapper.ToModel);
         }

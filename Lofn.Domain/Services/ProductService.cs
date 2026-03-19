@@ -121,7 +121,10 @@ namespace Lofn.Domain.Services
                 Price = product.Price,
                 Frequency = product.Frequency,
                 Limit = product.Limit,
-                Status = product.Status
+                Status = product.Status,
+                Featured = product.Featured,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
             model.Slug = await GenerateSlugAsync(storeId, 0, product.Name);
 
@@ -152,6 +155,8 @@ namespace Lofn.Domain.Services
             existing.Frequency = product.Frequency;
             existing.Limit = product.Limit;
             existing.Status = product.Status;
+            existing.Featured = product.Featured;
+            existing.UpdatedAt = DateTime.UtcNow;
             existing.Slug = await GenerateSlugAsync(storeId, product.ProductId, product.Name);
 
             return await _productRepository.UpdateAsync(existing);
@@ -181,17 +186,44 @@ namespace Lofn.Domain.Services
             };
         }
 
-        public async Task<IList<ProductInfo>> ListActiveByCategorySlugAsync(string storeSlug, string categorySlug)
+        public async Task<ProductListPagedResult> ListActiveByStoreSlugAsync(string storeSlug, string categorySlug, int pageNum)
         {
             var store = await _storeRepository.GetBySlugAsync(storeSlug);
             if (store == null)
                 throw new Exception("Store not found");
 
-            var category = await _categoryRepository.GetBySlugAndStoreAsync(store.StoreId, categorySlug);
-            if (category == null)
-                throw new Exception("Category not found");
+            long? categoryId = null;
+            if (!string.IsNullOrEmpty(categorySlug))
+            {
+                var category = await _categoryRepository.GetBySlugAndStoreAsync(store.StoreId, categorySlug);
+                if (category == null)
+                    throw new Exception("Category not found");
+                categoryId = category.CategoryId;
+            }
 
-            var items = await _productRepository.ListActiveByCategoryAndStoreAsync(category.CategoryId, store.StoreId);
+            var (items, pageCount) = await _productRepository.ListActiveByStoreAsync(store.StoreId, categoryId, pageNum);
+
+            var products = new List<ProductInfo>();
+            foreach (var item in items)
+            {
+                products.Add(await GetProductInfoAsync(item));
+            }
+
+            return new ProductListPagedResult
+            {
+                Products = products,
+                PageNum = pageNum,
+                PageCount = pageCount
+            };
+        }
+
+        public async Task<IList<ProductInfo>> ListFeaturedByStoreSlugAsync(string storeSlug, int limit)
+        {
+            var store = await _storeRepository.GetBySlugAsync(storeSlug);
+            if (store == null)
+                throw new Exception("Store not found");
+
+            var items = await _productRepository.ListFeaturedByStoreAsync(store.StoreId, limit);
 
             var products = new List<ProductInfo>();
             foreach (var item in items)

@@ -16,6 +16,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Lofn.API.GraphQL;
 using NAuth.DTO.Settings;
 using zTools.DTO.Settings;
 
@@ -37,6 +38,7 @@ namespace Lofn.API
             services.Configure<zToolsetting>(Configuration.GetSection("zTools"));
 
             services.ConfigureLofn();
+            services.AddLofnGraphQL();
             services.AddControllers();
             services.AddHealthChecks();
             services.AddSwaggerGen(c =>
@@ -91,13 +93,20 @@ namespace Lofn.API
             app.UseCors("MyPolicy");
 
             app.UseMiddleware<TenantMiddleware>();
-            app.UseAuthentication();
+
+            app.UseWhen(
+                context => !context.Request.Path.StartsWithSegments("/graphql")
+                           || context.Request.Path.StartsWithSegments("/graphql/admin"),
+                branch => branch.UseAuthentication()
+            );
             app.UseAuthorization();
 
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGraphQL("/graphql").AllowAnonymous();
+                endpoints.MapGraphQL("/graphql/admin", "admin");
             });
         }
     }
