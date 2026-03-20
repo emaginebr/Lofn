@@ -59,6 +59,9 @@ public partial class LofnContext : DbContext
                 .HasMaxLength(120)
                 .HasColumnName("slug");
             entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.ProductType)
+                .HasDefaultValue(1)
+                .HasColumnName("product_type");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.Featured)

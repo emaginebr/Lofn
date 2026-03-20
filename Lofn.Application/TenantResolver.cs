@@ -6,17 +6,21 @@ namespace Lofn.Application
     public class TenantResolver : ITenantResolver
     {
         private readonly IConfiguration _configuration;
+        private readonly ITenantContext _tenantContext;
 
-        public TenantResolver(IConfiguration configuration)
+        public TenantResolver(IConfiguration configuration, ITenantContext tenantContext)
         {
             _configuration = configuration;
+            _tenantContext = tenantContext;
         }
 
         public string TenantId
         {
             get
             {
-                var tenantId = _configuration["Tenant:DefaultTenantId"];
+                var tenantId = _tenantContext.TenantId;
+                if (string.IsNullOrEmpty(tenantId))
+                    tenantId = _configuration["Tenant:DefaultTenantId"];
                 if (string.IsNullOrEmpty(tenantId))
                     throw new System.InvalidOperationException(
                         "Tenant:DefaultTenantId is not configured in appsettings.json.");

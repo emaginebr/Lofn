@@ -123,6 +123,7 @@ namespace Lofn.Domain.Services
                 Frequency = product.Frequency,
                 Limit = product.Limit,
                 Status = product.Status,
+                ProductType = product.ProductType,
                 Featured = product.Featured,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
@@ -157,6 +158,7 @@ namespace Lofn.Domain.Services
             existing.Frequency = product.Frequency;
             existing.Limit = product.Limit;
             existing.Status = product.Status;
+            existing.ProductType = product.ProductType;
             existing.Featured = product.Featured;
             existing.UpdatedAt = DateTime.UtcNow;
             existing.Slug = await GenerateSlugAsync(storeId, product.ProductId, product.Name);

@@ -18,6 +18,7 @@ namespace Lofn.Domain.Models
         public int Frequency { get; set; }
         public int Limit { get; set; }
         public ProductStatusEnum Status { get; set; }
+        public ProductTypeEnum ProductType { get; set; }
         public bool Featured { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

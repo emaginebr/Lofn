@@ -23,7 +23,7 @@ COMMON_HEADERS = {
     "User-Agent": USER_AGENT,
 }
 
-PHOTOS_DIR = os.path.join(os.path.dirname(__file__), "photos")
+PHOTOS_DIR = os.path.join(os.path.dirname(__file__), "photos", "info-store")
 os.makedirs(PHOTOS_DIR, exist_ok=True)
 
 CATEGORIES = {
@@ -31,6 +31,8 @@ CATEGORIES = {
         {
             "name": "MacBook Air M3",
             "price": 12999.00,
+            "discount": 0,
+            "featured": True,
             "description": (
                 "## MacBook Air M3\n\n"
                 "O **MacBook Air** com o revolucionário chip **Apple M3** entrega desempenho excepcional "
@@ -57,6 +59,7 @@ CATEGORIES = {
         {
             "name": "Dell Inspiron 15",
             "price": 3499.00,
+            "discount": 10,
             "description": (
                 "## Dell Inspiron 15\n\n"
                 "O **Dell Inspiron 15** é a escolha inteligente para quem precisa de um notebook "
@@ -132,6 +135,8 @@ CATEGORIES = {
         {
             "name": "Acer Nitro 5",
             "price": 5499.00,
+            "discount": 15,
+            "featured": True,
             "description": (
                 "## Acer Nitro 5\n\n"
                 "O **Acer Nitro 5** é um notebook gamer de entrada que entrega performance "
@@ -190,6 +195,8 @@ CATEGORIES = {
         {
             "name": "Intel Core i7-13700K",
             "price": 2299.00,
+            "discount": 5,
+            "featured": True,
             "description": (
                 "## Intel Core i7-13700K\n\n"
                 "O **i7-13700K** da 13ª geração (Raptor Lake) é uma potência híbrida "
@@ -424,6 +431,8 @@ CATEGORIES = {
         {
             "name": "Samsung 970 EVO 1TB NVMe",
             "price": 499.00,
+            "discount": 20,
+            "featured": True,
             "description": (
                 "## Samsung 970 EVO Plus 1TB NVMe\n\n"
                 "O **970 EVO Plus** é um SSD NVMe de referência no mercado, "
@@ -473,6 +482,7 @@ CATEGORIES = {
         {
             "name": "Kingston A400 480GB SSD",
             "price": 199.00,
+            "discount": 10,
             "description": (
                 "## Kingston A400 480GB SSD\n\n"
                 "O **Kingston A400** é o upgrade mais impactante que você pode fazer "
@@ -575,6 +585,8 @@ CATEGORIES = {
         {
             "name": "Corsair 4000D",
             "price": 599.00,
+            "discount": 10,
+            "featured": True,
             "description": (
                 "## Corsair 4000D Airflow\n\n"
                 "O **Corsair 4000D Airflow** é um dos melhores gabinetes para refrigeração, "
@@ -681,6 +693,7 @@ CATEGORIES = {
         {
             "name": "Logitech G Pro X",
             "price": 699.00,
+            "featured": True,
             "description": (
                 "## Logitech G Pro X\n\n"
                 "O **G Pro X** é o teclado mecânico usado por jogadores profissionais de e-sports, "
@@ -756,6 +769,7 @@ CATEGORIES = {
         {
             "name": "Redragon Kumara K552",
             "price": 199.00,
+            "discount": 25,
             "description": (
                 "## Redragon Kumara K552\n\n"
                 "O **Kumara K552** é o teclado mecânico mais vendido do Brasil — "
@@ -809,6 +823,8 @@ CATEGORIES = {
         {
             "name": "Logitech G502 Hero",
             "price": 299.00,
+            "discount": 15,
+            "featured": True,
             "description": (
                 "## Logitech G502 Hero\n\n"
                 "O **G502 Hero** é o mouse gamer mais popular do mundo — "
@@ -886,6 +902,7 @@ CATEGORIES = {
         {
             "name": "Redragon Cobra M711",
             "price": 99.00,
+            "discount": 30,
             "description": (
                 "## Redragon Cobra M711\n\n"
                 "O **Cobra M711** é o mouse gamer mais vendido do Brasil — "
@@ -1005,9 +1022,11 @@ def create_product(token, store_slug, category_id, product):
             "name": product["name"],
             "description": product["description"],
             "price": product["price"],
+            "discount": product.get("discount", 0),
             "frequency": 0,
             "limit": 0,
             "status": 1,  # Active
+            "featured": product.get("featured", False),
         },
         headers={**COMMON_HEADERS, "Authorization": f"Bearer {token}"},
     )

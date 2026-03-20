@@ -78,6 +78,7 @@ namespace Lofn.Application
             injectDependency(typeof(ICategoryService), typeof(CategoryService), services, scoped);
             injectDependency(typeof(IStoreService), typeof(StoreService), services, scoped);
             injectDependency(typeof(IStoreUserService), typeof(StoreUserService), services, scoped);
+            injectDependency(typeof(IShopCarService), typeof(ShopCarService), services, scoped);
             #endregion
 
             services.AddAuthentication("BasicAuthentication")

@@ -1,38 +1,46 @@
 %% Diagram: Lofn System Architecture
 %% Type: Flowchart
-%% Generated: 2026-03-17
+%% Updated: 2026-03-19
 
 flowchart TD
     client([🌐 Client / Browser])
 
     subgraph api["Lofn.API"]
-        controllers["Controllers\n(Product, Order)"]
-        startup_api["Startup\n(Auth, CORS, Swagger)"]
+        controllers["Controllers\n(Product, Category, Store,\nImage, StoreUser, ShopCar)"]
+        swagger["Swagger / OpenAPI"]
+        startup_api["Startup\n(Auth, CORS, Tenant)"]
+    end
+
+    subgraph graphql["Lofn.GraphQL"]
+        public_gql["Public Schema\n(/graphql)\nstores, products, categories"]
+        admin_gql["Admin Schema\n(/graphql/admin)\nmyStores, myProducts, myCategories"]
+        type_ext["Type Extensions\n(logoUrl, imageUrl, productCount)"]
     end
 
     subgraph app["Lofn.Application"]
         di["DI Bootstrap\n(ConfigureLofn)"]
+        tenant["TenantResolver\n(Multi-Tenant)"]
     end
 
     subgraph domain["Lofn.Domain"]
-        services["Services\n(ProductService, OrderService)"]
-        models["Models\n(Product, Order, OrderItem)"]
+        services["Services\n(Product, Category, Store,\nStoreUser, ShopCar, Image)"]
+        models["Models\n(Product, Category, Store)"]
         core["Core\n(LogCore, Utils)"]
     end
 
-    subgraph nuget["Lofn (NuGet Package)"]
-        dto["DTO\n(Params, Results, Enums, Settings)"]
-        acl["ACL\n(ProductClient, BaseClient)"]
+    subgraph nuget["Lofn (Shared Package)"]
+        dto["DTO\n(Product, Category, Store,\nShopCar, Settings, Enums)"]
+        acl["ACL\n(ProductClient, StoreClient,\nCategoryClient, ImageClient)"]
     end
 
     subgraph infra_ifaces["Lofn.Infra.Interfaces"]
-        repo_ifaces["Repository Interfaces\n(IOrderRepository, IProductRepository)"]
+        repo_ifaces["Repository Interfaces\n(IProductRepository,\nICategoryRepository, etc.)"]
         uow_iface["IUnitOfWork"]
     end
 
     subgraph infra["Lofn.Infra"]
         context["LofnContext\n(EF Core 9)"]
-        repos["Repositories\n(OrderRepository, ProductRepository)"]
+        repos["Repositories\n(Product, Category,\nStore, StoreUser, Image)"]
         uow["UnitOfWork"]
     end
 
@@ -40,16 +48,21 @@ flowchart TD
         nauth["🔐 NAuth\n(Authentication)"]
         stripe["💳 Stripe\n(Payments)"]
         aws["☁️ AWS S3\n(File Storage)"]
-        ztools["🔧 zTools\n(ChatGPT, Mail, Utils)"]
+        ztools["🔧 zTools\n(ChatGPT, Mail, Files)"]
     end
 
     db[(🐘 PostgreSQL)]
 
-    client -->|"HTTP/HTTPS"| controllers
+    client -->|"REST"| controllers
+    client -->|"GraphQL"| public_gql
+    client -->|"GraphQL + Auth"| admin_gql
     startup_api -->|"configures"| di
     di -->|"registers"| services
     di -->|"registers"| repos
     controllers -->|"uses"| services
+    public_gql -->|"queries"| context
+    admin_gql -->|"queries"| context
+    type_ext -->|"resolves"| aws
     services -->|"uses"| repo_ifaces
     services -->|"uses"| dto
     services -->|"maps"| models
@@ -61,8 +74,10 @@ flowchart TD
     services -->|"file upload"| aws
     controllers -->|"auth validation"| nauth
     acl -->|"uses"| dto
+    tenant -->|"resolves"| context
 
     style api fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    style graphql fill:#E535AB,stroke:#B02888,color:#fff
     style app fill:#7B68EE,stroke:#5A4CBE,color:#fff
     style domain fill:#50C878,stroke:#3A9A5C,color:#fff
     style nuget fill:#FF8C00,stroke:#CC7000,color:#fff

@@ -21,6 +21,7 @@ namespace Lofn.Domain.Mappers
                 Frequency = md.Frequency,
                 Limit = md.Limit,
                 Status = md.Status,
+                ProductType = md.ProductType,
                 Featured = md.Featured,
                 CreatedAt = md.CreatedAt,
                 UpdatedAt = md.UpdatedAt
@@ -43,6 +44,7 @@ namespace Lofn.Domain.Mappers
                 Frequency = dto.Frequency,
                 Limit = dto.Limit,
                 Status = dto.Status,
+                ProductType = dto.ProductType,
                 Featured = dto.Featured
             };
         }

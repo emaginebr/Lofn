@@ -41,6 +41,7 @@ CREATE TABLE products (
     frequency INTEGER NOT NULL,
     "limit" INTEGER NOT NULL,
     status INTEGER NOT NULL,
+    product_type INTEGER NOT NULL DEFAULT 1,
     description TEXT,
     image VARCHAR(150),
     store_id BIGINT,
@@ -53,18 +54,6 @@ CREATE TABLE products (
     CONSTRAINT fk_product_category FOREIGN KEY (category_id) REFERENCES categories (category_id)
 );
 
-CREATE TABLE orders (
-    order_id BIGSERIAL NOT NULL,
-    user_id BIGINT NOT NULL,
-    status INTEGER NOT NULL DEFAULT 1,
-    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    seller_id BIGINT,
-    store_id BIGINT,
-    CONSTRAINT orders_pkey PRIMARY KEY (order_id),
-    CONSTRAINT fk_order_store FOREIGN KEY (store_id) REFERENCES stores (store_id)
-);
-
 CREATE TABLE product_images (
     image_id BIGSERIAL NOT NULL,
     product_id BIGINT NOT NULL,
@@ -74,12 +63,3 @@ CREATE TABLE product_images (
     CONSTRAINT fk_product_image_product FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE
 );
 
-CREATE TABLE order_items (
-    item_id BIGINT NOT NULL,
-    order_id BIGINT NOT NULL,
-    product_id BIGINT NOT NULL,
-    quantity INTEGER NOT NULL DEFAULT 1,
-    CONSTRAINT order_items_pkey PRIMARY KEY (item_id),
-    CONSTRAINT fk_order_item_order FOREIGN KEY (order_id) REFERENCES orders (order_id),
-    CONSTRAINT fk_order_item_product FOREIGN KEY (product_id) REFERENCES products (product_id)
-);

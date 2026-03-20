@@ -110,37 +110,7 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 
 ---
 
-### 4. Order Controller
-
-**Prefixo:** `/order`
-
-#### POST `/update` — Atualizar pedido
-
-- **Auth:** Requerida
-- **Request Body:** `OrderInfo`
-- **Response:** `OrderInfo`
-
-#### POST `/search` — Buscar pedidos (paginado)
-
-- **Auth:** Requerida
-- **Request Body:** `OrderSearchParam`
-- **Response:** `OrderListPagedResult`
-
-#### POST `/list` — Listar pedidos com filtros
-
-- **Auth:** Requerida
-- **Request Body:** `OrderParam`
-- **Response:** `IList<OrderInfo>`
-
-#### GET `/getById/{orderId}` — Obter pedido por ID
-
-- **Auth:** Requerida
-- **Params:** `orderId` (long)
-- **Response:** `OrderInfo`
-
----
-
-### 5. Store Controller
+### 4. Store Controller
 
 **Prefixo:** `/store`
 
@@ -175,7 +145,7 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 
 ---
 
-### 6. StoreUser Controller
+### 5. StoreUser Controller
 
 **Prefixo:** `/storeuser`
 
@@ -199,6 +169,18 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 
 ---
 
+### 6. ShopCar Controller
+
+**Prefixo:** `/shopcar`
+
+#### POST `/insert` — Criar carrinho de compras
+
+- **Auth:** Requerida
+- **Request Body:** `ShopCarInfo`
+- **Response:** `ShopCarInfo`
+
+---
+
 ## DTOs (Data Transfer Objects)
 
 ### Product
@@ -216,9 +198,11 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 | `name` | `string` | Nome do produto |
 | `description` | `string` | Descrição do produto |
 | `price` | `double` | Preço do produto |
+| `discount` | `double` | Desconto do produto (default: 0) |
 | `frequency` | `int` | Frequência (em dias) |
 | `limit` | `int` | Limite de unidades |
 | `status` | `ProductStatusEnum` | Status do produto |
+| `productType` | `ProductTypeEnum` | Tipo do produto (default: Physical) |
 | `featured` | `bool` | Produto em destaque |
 | `createdAt` | `DateTime` | Data de criação |
 | `updatedAt` | `DateTime` | Data da última atualização |
@@ -232,9 +216,11 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 | `name` | `string` | Nome do produto |
 | `description` | `string` | Descrição |
 | `price` | `double` | Preço |
+| `discount` | `double` | Desconto (default: 0) |
 | `frequency` | `int` | Frequência (em dias) |
 | `limit` | `int` | Limite de unidades |
 | `status` | `ProductStatusEnum` | Status |
+| `productType` | `ProductTypeEnum` | Tipo do produto (default: Physical) |
 | `featured` | `bool` | Em destaque |
 
 #### ProductUpdateInfo
@@ -246,9 +232,11 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 | `name` | `string` | Nome |
 | `description` | `string` | Descrição |
 | `price` | `double` | Preço |
+| `discount` | `double` | Desconto (default: 0) |
 | `frequency` | `int` | Frequência |
 | `limit` | `int` | Limite |
 | `status` | `ProductStatusEnum` | Status |
+| `productType` | `ProductTypeEnum` | Tipo do produto (default: Physical) |
 | `featured` | `bool` | Em destaque |
 
 #### ProductImageInfo
@@ -285,57 +273,22 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 
 ---
 
-### Order
+### ShopCar
 
-#### OrderInfo
+#### ShopCarInfo
 
 | Propriedade | Tipo | Descrição |
 |-------------|------|-----------|
-| `orderId` | `long` | ID do pedido |
-| `storeId` | `long?` | ID da loja |
-| `userId` | `long` | ID do comprador |
-| `sellerId` | `long?` | ID do vendedor |
-| `status` | `OrderStatusEnum` | Status do pedido |
+| `user` | `UserInfo` | Dados do usuário (NAuth) |
+| `items` | `ShopCarItemInfo[]` | Itens do carrinho |
 | `createdAt` | `DateTime` | Data de criação |
-| `updatedAt` | `DateTime` | Data da última atualização |
-| `user` | `UserInfo` | Dados do comprador (NAuth) |
-| `seller` | `UserInfo` | Dados do vendedor (NAuth) |
-| `items` | `OrderItemInfo[]` | Itens do pedido |
 
-#### OrderItemInfo
+#### ShopCarItemInfo
 
 | Propriedade | Tipo | Descrição |
 |-------------|------|-----------|
-| `itemId` | `long` | ID do item |
-| `orderId` | `long` | ID do pedido |
-| `productId` | `long` | ID do produto |
-| `quantity` | `int` | Quantidade |
 | `product` | `ProductInfo` | Dados do produto |
-
-#### OrderSearchParam
-
-| Propriedade | Tipo | Descrição |
-|-------------|------|-----------|
-| `storeId` | `long` | ID da loja |
-| `userId` | `long?` | ID do usuário (filtro) |
-| `sellerId` | `long?` | ID do vendedor (filtro) |
-| `pageNum` | `int` | Número da página |
-
-#### OrderParam
-
-| Propriedade | Tipo | Descrição |
-|-------------|------|-----------|
-| `storeId` | `long` | ID da loja |
-| `userId` | `long` | ID do usuário |
-| `status` | `OrderStatusEnum?` | Status (filtro opcional) |
-
-#### OrderListPagedResult
-
-| Propriedade | Tipo | Descrição |
-|-------------|------|-----------|
-| `orders` | `OrderInfo[]` | Lista de pedidos |
-| `pageNum` | `int` | Página atual |
-| `pageCount` | `int` | Total de páginas |
+| `quantity` | `int` | Quantidade |
 
 ---
 
@@ -440,23 +393,12 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 | `2` | `Inactive` | Produto inativo/oculto |
 | `3` | `Expired` | Produto expirado |
 
-### OrderStatusEnum
+### ProductTypeEnum
 
 | Valor | Nome | Descrição |
 |-------|------|-----------|
-| `1` | `Incoming` | Pedido recebido |
-| `2` | `Active` | Pedido ativo |
-| `3` | `Suspended` | Pedido suspenso |
-| `4` | `Finished` | Pedido finalizado |
-| `5` | `Expired` | Pedido expirado |
-
-### OrderFrequencyEnum
-
-| Valor | Nome | Descrição |
-|-------|------|-----------|
-| `7` | `Weekly` | Semanal |
-| `30` | `Monthly` | Mensal |
-| `365` | `Annual` | Anual |
+| `1` | `Physical` | Produto físico (padrão) |
+| `2` | `InfoProduct` | Infoproduto / produto digital |
 
 ---
 
@@ -482,7 +424,7 @@ Não requer autenticação. Expõe apenas dados ativos/públicos.
 
 #### Campos ocultos no schema público
 
-O tipo `Store` no endpoint público **não expõe**: `storeUsers`, `ownerId`, `orders`.
+O tipo `Store` no endpoint público **não expõe**: `storeUsers`, `ownerId`.
 
 #### Exemplo
 
@@ -523,8 +465,6 @@ Todas as queries são filtradas automaticamente pelas lojas vinculadas ao usuár
 | `myStores` | `[Store]` | Todas as lojas do usuário (qualquer status) |
 | `myProducts` | `[Product]` | Todos os produtos das lojas do usuário (qualquer status) |
 | `myCategories` | `[Category]` | Todas as categorias das lojas do usuário |
-| `myOrders` | `[Order]` | Todos os pedidos das lojas do usuário |
-
 #### Exemplo
 
 ```graphql
@@ -532,21 +472,17 @@ Todas as queries são filtradas automaticamente pelas lojas vinculadas ao usuár
   myStores {
     storeId
     name
+    logoUrl
     products {
       productId
       name
       price
+      imageUrl
       status
     }
-    orders {
-      orderId
-      status
-      orderItems {
-        quantity
-        product {
-          name
-        }
-      }
+    categories {
+      name
+      productCount
     }
   }
 }
@@ -560,15 +496,13 @@ Os tipos GraphQL mapeiam diretamente as entidades do banco de dados, com as navi
 
 | Tipo | Campos principais | Campos computados | Relações navegáveis |
 |------|-------------------|-------------------|---------------------|
-| `Store` | `storeId`, `slug`, `name`, `logo`, `status` | `logoUrl` | `products`, `categories`, `orders`*, `storeUsers`* |
-| `Product` | `productId`, `slug`, `name`, `price`, `status`, `featured`, `description` | `imageUrl` | `store`, `category`, `productImages`, `orderItems` |
+| `Store` | `storeId`, `slug`, `name`, `logo`, `status` | `logoUrl` | `products`, `categories`, `storeUsers`* |
+| `Product` | `productId`, `slug`, `name`, `price`, `discount`, `status`, `productType`, `featured`, `description` | `imageUrl` | `store`, `category`, `productImages` |
 | `Category` | `categoryId`, `slug`, `name` | `productCount` | `store`, `products` |
-| `Order` | `orderId`, `userId`, `status`, `createdAt` | — | `store`, `orderItems` |
-| `OrderItem` | `itemId`, `quantity` | — | `order`, `product` |
 | `ProductImage` | `imageId`, `image`, `sortOrder` | `imageUrl` | `product` |
 | `StoreUser` | `storeUserId`, `storeId`, `userId` | — | `store` |
 
-> \* `orders`, `storeUsers` e `ownerId` são **ocultos** no schema público (`/graphql`), visíveis apenas no admin (`/graphql/admin`).
+> \* `storeUsers` e `ownerId` são **ocultos** no schema público (`/graphql`), visíveis apenas no admin (`/graphql/admin`).
 
 ### Filtering e Sorting
 
@@ -602,7 +536,7 @@ Todos os campos escalares suportam filtering e sorting via argumentos gerados au
 
 ### UserInfo (NAuth.DTO)
 
-DTO externo do pacote NAuth, referenciado em `OrderInfo.User`, `OrderInfo.Seller` e `StoreUserInfo.User`. Contém dados do usuário autenticado (ID, nome, email, etc.).
+DTO externo do pacote NAuth, referenciado em `ShopCarInfo.User` e `StoreUserInfo.User`. Contém dados do usuário autenticado (ID, nome, email, etc.).
 
 ---
 
@@ -613,15 +547,15 @@ DTO externo do pacote NAuth, referenciado em `OrderInfo.User`, `OrderInfo.Seller
 | **Product** | 3 (insert, update, search) | 9 (inclui enums e params) |
 | **Category** | 3 (insert, update, delete) | 3 |
 | **Image** | 3 (upload, list, delete) | 1 |
-| **Order** | 4 (update, search, list, getById) | 7 (inclui enums e params) |
 | **Store** | 4 (insert, update, uploadLogo, delete) | 4 (inclui enum) |
 | **StoreUser** | 3 (list, insert, delete) | 2 |
-| **GraphQL** | 2 endpoints, 9 queries | 7 tipos + 4 campos computados |
-| **Total** | **20 REST + 2 GraphQL** | **32** |
+| **ShopCar** | 1 (insert) | 2 |
+| **GraphQL** | 2 endpoints, 8 queries | 5 tipos + 4 campos computados |
+| **Total** | **17 REST + 2 GraphQL** | **25** |
 
 - **Endpoint público REST:** `POST /product/search`
 - **Endpoints GraphQL públicos:** `/graphql` (stores, products, categories, storeBySlug, featuredProducts)
-- **Endpoints GraphQL autenticados:** `/graphql/admin` (myStores, myProducts, myCategories, myOrders)
+- **Endpoints GraphQL autenticados:** `/graphql/admin` (myStores, myProducts, myCategories)
 - **Todos os demais endpoints REST requerem Bearer Token**
 - **Serialização JSON:** propriedades em `camelCase` via `[JsonPropertyName]`
 - **Leituras migradas para GraphQL:** listagem e busca de stores, products e categories agora são feitas exclusivamente via GraphQL, com suporte a projection, filtering e sorting
