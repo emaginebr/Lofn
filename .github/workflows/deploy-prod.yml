@@ -50,6 +50,8 @@ jobs:
             cd "$DEPLOY_DIR"
 
             cat > .env.prod <<'ENVEOF'
+            EMAGINE_CONNECTION_STRING=${{ secrets.EMAGINE_CONNECTION_STRING }}
+            EMAGINE_JWT_SECRET=${{ secrets.EMAGINE_JWT_SECRET }}
             MONEXUP_CONNECTION_STRING=${{ secrets.MONEXUP_CONNECTION_STRING }}
             MONEXUP_JWT_SECRET=${{ secrets.MONEXUP_JWT_SECRET }}
             ENVEOF
