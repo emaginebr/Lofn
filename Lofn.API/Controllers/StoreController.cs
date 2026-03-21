@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NAuth.ACL.Interfaces;
 using zTools.ACL.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lofn.API.Controllers
@@ -38,42 +36,24 @@ namespace Lofn.API.Controllers
         [HttpPost("insert")]
         public async Task<ActionResult<StoreInfo>> Insert([FromBody] StoreInsertInfo store)
         {
-            try
-            {
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                    return Unauthorized();
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null)
+                return Unauthorized();
 
-                var model = await _storeService.InsertAsync(store, userSession.UserId);
-                return Ok(StoreMapper.ToInfo(model));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var model = await _storeService.InsertAsync(store, userSession.UserId);
+            return Ok(StoreMapper.ToInfo(model));
         }
 
         [Authorize]
         [HttpPost("update")]
         public async Task<ActionResult<StoreInfo>> Update([FromBody] StoreUpdateInfo store)
         {
-            try
-            {
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                    return Unauthorized();
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null)
+                return Unauthorized();
 
-                var model = await _storeService.UpdateAsync(store, userSession.UserId);
-                return Ok(StoreMapper.ToInfo(model));
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var model = await _storeService.UpdateAsync(store, userSession.UserId);
+            return Ok(StoreMapper.ToInfo(model));
         }
 
         [Authorize]
@@ -81,50 +61,32 @@ namespace Lofn.API.Controllers
         [HttpPost("uploadLogo/{storeId}")]
         public async Task<ActionResult<StoreInfo>> UploadLogo(long storeId, IFormFile file)
         {
-            try
-            {
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                    return Unauthorized();
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null)
+                return Unauthorized();
 
-                if (file == null || file.Length == 0)
-                    return BadRequest("No file uploaded");
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded");
 
-                var fileName = await _fileClient.UploadFileAsync(_tenantResolver.BucketName, file);
-                var model = await _storeService.UploadLogoAsync(storeId, fileName, userSession.UserId);
-                var logoUrl = await _fileClient.GetFileUrlAsync(_tenantResolver.BucketName, fileName);
+            var fileName = await _fileClient.UploadFileAsync(_tenantResolver.BucketName, file);
+            var model = await _storeService.UploadLogoAsync(storeId, fileName, userSession.UserId);
+            var logoUrl = await _fileClient.GetFileUrlAsync(_tenantResolver.BucketName, fileName);
 
-                var info = StoreMapper.ToInfo(model);
-                info.LogoUrl = logoUrl;
-                return Ok(info);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var info = StoreMapper.ToInfo(model);
+            info.LogoUrl = logoUrl;
+            return Ok(info);
         }
 
         [Authorize]
         [HttpDelete("delete/{storeId}")]
         public async Task<IActionResult> Delete(long storeId)
         {
-            try
-            {
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                    return Unauthorized();
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null)
+                return Unauthorized();
 
-                await _storeService.DeleteAsync(storeId);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _storeService.DeleteAsync(storeId);
+            return NoContent();
         }
     }
 }

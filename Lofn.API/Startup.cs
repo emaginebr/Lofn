@@ -16,6 +16,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Lofn.API.Filters;
 using Lofn.GraphQL;
 using NAuth.DTO.Settings;
 using zTools.DTO.Settings;
@@ -39,7 +40,10 @@ namespace Lofn.API
 
             services.ConfigureLofn();
             services.AddLofnGraphQL();
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<GlobalExceptionFilter>();
+            });
             services.AddHealthChecks();
             services.AddSwaggerGen(c =>
             {

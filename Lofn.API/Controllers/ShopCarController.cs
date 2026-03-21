@@ -2,7 +2,6 @@ using Lofn.Domain.Interfaces;
 using Lofn.DTO.ShopCar;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace Lofn.API.Controllers
@@ -22,15 +21,8 @@ namespace Lofn.API.Controllers
         [HttpPost("insert")]
         public async Task<ActionResult<ShopCarInfo>> Insert([FromBody] ShopCarInfo shopCar)
         {
-            try
-            {
-                var result = await _shopCarService.InsertAsync(shopCar);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var result = await _shopCarService.InsertAsync(shopCar);
+            return Ok(result);
         }
     }
 }
