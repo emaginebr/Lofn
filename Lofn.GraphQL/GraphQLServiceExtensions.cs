@@ -1,4 +1,5 @@
 using HotChocolate.Execution.Configuration;
+using HotChocolate.Execution.Options;
 using HotChocolate.Types.Pagination;
 using Lofn.GraphQL.Admin;
 using Lofn.GraphQL.Public;
@@ -29,7 +30,8 @@ public static class GraphQLServiceExtensions
             })
             .AddProjections()
             .AddFiltering()
-            .AddSorting();
+            .AddSorting()
+            .ModifyCostOptions(o => o.MaxFieldCost = 5000);
 
         services
             .AddGraphQLServer("admin")
@@ -48,7 +50,8 @@ public static class GraphQLServiceExtensions
             })
             .AddProjections()
             .AddFiltering()
-            .AddSorting();
+            .AddSorting()
+            .ModifyCostOptions(o => o.MaxFieldCost = 5000);
 
         return services;
     }
