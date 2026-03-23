@@ -1,3 +1,4 @@
+using System.Linq;
 using HotChocolate.Types;
 using Lofn.Domain.Interfaces;
 using Lofn.Infra.Context;
@@ -9,7 +10,7 @@ public class ProductTypeExtension : ObjectTypeExtension<Product>
 {
     protected override void Configure(IObjectTypeDescriptor<Product> descriptor)
     {
-        descriptor.Field(t => t.Image).IsProjected(true);
+        descriptor.Field(t => t.ProductImages).IsProjected(true);
 
         descriptor
             .Field("imageUrl")
@@ -17,10 +18,16 @@ public class ProductTypeExtension : ObjectTypeExtension<Product>
             .Resolve(async ctx =>
             {
                 var product = ctx.Parent<Product>();
-                if (string.IsNullOrEmpty(product.Image)) return null;
+                var firstImage = product.ProductImages?
+                    .OrderBy(i => i.SortOrder)
+                    .FirstOrDefault();
+
+                if (firstImage == null || string.IsNullOrEmpty(firstImage.Image))
+                    return null;
+
                 var fileClient = ctx.Service<IFileClient>();
                 var tenantResolver = ctx.Service<ITenantResolver>();
-                return await fileClient.GetFileUrlAsync(tenantResolver.BucketName, product.Image);
+                return await fileClient.GetFileUrlAsync(tenantResolver.BucketName, firstImage.Image);
             });
     }
 }

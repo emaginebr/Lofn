@@ -27,8 +27,6 @@ public partial class Product
 
     public string Description { get; set; }
 
-    public string Image { get; set; }
-
     public long? StoreId { get; set; }
 
     public long? CategoryId { get; set; }

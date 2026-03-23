@@ -80,7 +80,6 @@ namespace Lofn.Domain.Services
         public async Task<ProductInfo> GetProductInfoAsync(ProductModel md)
         {
             var info = ProductMapper.ToInfo(md);
-            info.ImageUrl = await _fileClient.GetFileUrlAsync(_tenantResolver.BucketName, md.Image);
             info.Images = await _productImageService.ListByProductAsync(md.ProductId);
             return info;
         }

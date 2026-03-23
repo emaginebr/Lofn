@@ -14,10 +14,6 @@ namespace Lofn.DTO.Product
         public long? CategoryId { get; set; }
         [JsonPropertyName("slug")]
         public string Slug { get; set; }
-        [JsonPropertyName("image")]
-        public string Image { get; set; }
-        [JsonPropertyName("imageUrl")]
-        public string ImageUrl { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("description")]

@@ -36,9 +36,6 @@ public partial class LofnContext : DbContext
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Frequency).HasColumnName("frequency");
-            entity.Property(e => e.Image)
-                .HasMaxLength(150)
-                .HasColumnName("image");
             entity.Property(e => e.Limit).HasColumnName("limit");
             entity.Property(e => e.Name)
                 .IsRequired()

@@ -15,7 +15,6 @@ namespace Lofn.Infra.Mappers
                 StoreId = row.StoreId,
                 Name = row.Name,
                 Slug = row.Slug,
-                Image = row.Image,
                 Description = row.Description,
                 Price = row.Price,
                 Frequency = row.Frequency,
@@ -35,7 +34,6 @@ namespace Lofn.Infra.Mappers
             row.StoreId = md.StoreId;
             row.Name = md.Name;
             row.Slug = md.Slug;
-            row.Image = md.Image;
             row.Description = md.Description;
             row.Price = md.Price;
             row.Frequency = md.Frequency;

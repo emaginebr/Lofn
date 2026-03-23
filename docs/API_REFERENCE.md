@@ -193,8 +193,6 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 | `storeId` | `long?` | ID da loja |
 | `categoryId` | `long?` | ID da categoria |
 | `slug` | `string` | Slug único do produto |
-| `image` | `string` | Nome do arquivo da imagem principal |
-| `imageUrl` | `string` | URL completa da imagem principal |
 | `name` | `string` | Nome do produto |
 | `description` | `string` | Descrição do produto |
 | `price` | `double` | Preço do produto |
@@ -539,15 +537,17 @@ Os tipos GraphQL mapeiam diretamente as entidades do banco de dados, com as navi
 
 | Tipo | Campos principais | Campos computados | Campos sempre projetados | Relações navegáveis |
 |------|-------------------|-------------------|--------------------------|---------------------|
-| `Store` | `storeId`, `slug`, `name`, `logo`, `status` | `logoUrl` | `logo`† | `products`, `categories`, `storeUsers`* |
-| `Product` | `productId`, `slug`, `name`, `price`, `discount`, `status`, `productType`, `featured`, `description` | `imageUrl` | `image`† | `store`, `category`, `productImages` |
-| `Category` | `categoryId`, `slug`, `name` | `productCount` | — | `store`, `products` |
-| `ProductImage` | `imageId`, `image`, `sortOrder` | `imageUrl` | `image`† | `product` |
+| `Store` | `storeId`, `slug`, `name`, `logo`, `status` | `logoUrl`† | `logo`†† | `products`, `categories`, `storeUsers`* |
+| `Product` | `productId`, `slug`, `name`, `price`, `discount`, `status`, `productType`, `featured`, `description` | `imageUrl`† | `productImages`†† | `store`, `category`, `productImages` |
+| `Category` | `categoryId`, `slug`, `name` | `productCount`† | — | `store`, `products` |
+| `ProductImage` | `imageId`, `image`, `sortOrder` | `imageUrl`† | `image`†† | `product` |
 | `StoreUser` | `storeUserId`, `storeId`, `userId` | — | — | `store` |
 
 > \* `storeUsers` e `ownerId` são **ocultos** no schema público (`/graphql`), visíveis apenas no admin (`/graphql/admin`).
 >
-> † Campos marcados com `IsProjected(true)` via `ObjectTypeExtension<T>`. São **sempre incluídos** no SELECT do EF Core, mesmo quando não solicitados na query, pois são necessários para resolver os campos computados (`logoUrl`, `imageUrl`).
+> † Campos computados via `ObjectTypeExtension<T>`. Resolvidos em tempo de execução, não existem como colunas no banco.
+>
+> †† Campos marcados com `IsProjected(true)`. São **sempre incluídos** no SELECT do EF Core, mesmo quando não solicitados na query, pois são necessários para resolver os campos computados. O `imageUrl` do `Product` é resolvido a partir da **primeira imagem** da coleção `productImages` ordenada por `sortOrder`.
 
 ### Filtering e Sorting
 
