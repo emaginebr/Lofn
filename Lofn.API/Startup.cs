@@ -45,6 +45,7 @@ namespace Lofn.API
             services.AddControllers(options =>
             {
                 options.Filters.Add<GlobalExceptionFilter>();
+                options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
             });
             services.AddHealthChecks();
             services.AddSwaggerGen(c =>

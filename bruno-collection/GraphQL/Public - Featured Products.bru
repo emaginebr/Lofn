@@ -12,15 +12,13 @@ post {
 
 body:graphql {
   {
-    featuredProducts(storeSlug: "minha-loja", skip: 0, take: 10) {
+    products(skip: 0, take: 10) {
       items {
         productId
         name
         slug
         price
-        image
         imageUrl
-        description
         featured
         productImages {
           imageId

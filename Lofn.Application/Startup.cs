@@ -21,6 +21,8 @@ using Lofn.Domain;
 using Microsoft.Extensions.Configuration;
 using NAuth.ACL;
 using NAuth.ACL.Interfaces;
+using FluentValidation;
+using Lofn.Domain.Validators;
 using zTools.ACL.Interfaces;
 using zTools.ACL;
 
@@ -83,6 +85,10 @@ namespace Lofn.Application
             injectDependency(typeof(IStoreService), typeof(StoreService), services, scoped);
             injectDependency(typeof(IStoreUserService), typeof(StoreUserService), services, scoped);
             injectDependency(typeof(IShopCartService), typeof(ShopCartService), services, scoped);
+            #endregion
+
+            #region Validators
+            services.AddValidatorsFromAssemblyContaining<ShopCartInfoValidator>(ServiceLifetime.Scoped);
             #endregion
 
             services.AddScoped<ITenantSecretProvider, NAuthTenantSecretProvider>();

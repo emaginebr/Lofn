@@ -14,14 +14,11 @@ body:graphql {
   query ($where: ProductFilterInput, $skip: Int, $take: Int) {
     products(where: $where, order: { name: ASC }, skip: $skip, take: $take) {
       items {
-        productId
         slug
         name
         price
         discount
         imageUrl
-        productImages { imageId imageUrl sortOrder }
-        category { slug name }
       }
       pageInfo { hasNextPage hasPreviousPage }
       totalCount
