@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-using HotChocolate;
 using HotChocolate.Types;
 using Lofn.Domain.Interfaces;
 using Lofn.Infra.Context;
@@ -7,15 +5,22 @@ using zTools.ACL.Interfaces;
 
 namespace Lofn.GraphQL.Types;
 
-[ExtendObjectType(typeof(Product))]
-public class ProductTypeExtension
+public class ProductTypeExtension : ObjectTypeExtension<Product>
 {
-    public async Task<string> GetImageUrl(
-        [Parent] Product product,
-        [Service] IFileClient fileClient,
-        [Service] ITenantResolver tenantResolver)
+    protected override void Configure(IObjectTypeDescriptor<Product> descriptor)
     {
-        if (string.IsNullOrEmpty(product.Image)) return null;
-        return await fileClient.GetFileUrlAsync(tenantResolver.BucketName, product.Image);
+        descriptor.Field(t => t.Image).IsProjected(true);
+
+        descriptor
+            .Field("imageUrl")
+            .Type<StringType>()
+            .Resolve(async ctx =>
+            {
+                var product = ctx.Parent<Product>();
+                if (string.IsNullOrEmpty(product.Image)) return null;
+                var fileClient = ctx.Service<IFileClient>();
+                var tenantResolver = ctx.Service<ITenantResolver>();
+                return await fileClient.GetFileUrlAsync(tenantResolver.BucketName, product.Image);
+            });
     }
 }

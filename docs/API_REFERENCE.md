@@ -3,7 +3,7 @@
 > Documentação completa da API REST do backend Lofn para implementação do frontend. Inclui todos os endpoints, DTOs, enums e estruturas de dados.
 
 **Created:** 2026-03-18
-**Last Updated:** 2026-03-21
+**Last Updated:** 2026-03-23
 
 ---
 
@@ -406,6 +406,16 @@ O token é validado via `NAuth`. Caso inválido ou ausente, retorna `401 Unautho
 
 A API expõe dois endpoints GraphQL via HotChocolate, ambos com suporte a **offset-based pagination**, **projection**, **filtering** e **sorting**.
 
+#### Configuração de Custo
+
+| Parâmetro | Valor | Descrição |
+|-----------|-------|-----------|
+| `MaxFieldCost` | `5000` | Custo máximo permitido por query (default HotChocolate: 1000) |
+| `MaxPageSize` | `50` | Máximo de itens por página |
+| `DefaultPageSize` | `10` | Itens por página padrão |
+
+> **Nota:** Queries com muitos campos aninhados (ex: store → products → productImages) podem atingir o limite de custo. Se receber o erro `HC0047`, reduza a profundidade dos campos solicitados.
+
 #### Paginação (Offset-Based)
 
 Todas as queries que retornam listas suportam paginação offset-based com os seguintes argumentos:
@@ -527,15 +537,17 @@ Todas as queries são filtradas automaticamente pelas lojas vinculadas ao usuár
 
 Os tipos GraphQL mapeiam diretamente as entidades do banco de dados, com as navigation properties disponíveis para consulta em profundidade:
 
-| Tipo | Campos principais | Campos computados | Relações navegáveis |
-|------|-------------------|-------------------|---------------------|
-| `Store` | `storeId`, `slug`, `name`, `logo`, `status` | `logoUrl` | `products`, `categories`, `storeUsers`* |
-| `Product` | `productId`, `slug`, `name`, `price`, `discount`, `status`, `productType`, `featured`, `description` | `imageUrl` | `store`, `category`, `productImages` |
-| `Category` | `categoryId`, `slug`, `name` | `productCount` | `store`, `products` |
-| `ProductImage` | `imageId`, `image`, `sortOrder` | `imageUrl` | `product` |
-| `StoreUser` | `storeUserId`, `storeId`, `userId` | — | `store` |
+| Tipo | Campos principais | Campos computados | Campos sempre projetados | Relações navegáveis |
+|------|-------------------|-------------------|--------------------------|---------------------|
+| `Store` | `storeId`, `slug`, `name`, `logo`, `status` | `logoUrl` | `logo`† | `products`, `categories`, `storeUsers`* |
+| `Product` | `productId`, `slug`, `name`, `price`, `discount`, `status`, `productType`, `featured`, `description` | `imageUrl` | `image`† | `store`, `category`, `productImages` |
+| `Category` | `categoryId`, `slug`, `name` | `productCount` | — | `store`, `products` |
+| `ProductImage` | `imageId`, `image`, `sortOrder` | `imageUrl` | `image`† | `product` |
+| `StoreUser` | `storeUserId`, `storeId`, `userId` | — | — | `store` |
 
 > \* `storeUsers` e `ownerId` são **ocultos** no schema público (`/graphql`), visíveis apenas no admin (`/graphql/admin`).
+>
+> † Campos marcados com `IsProjected(true)` via `ObjectTypeExtension<T>`. São **sempre incluídos** no SELECT do EF Core, mesmo quando não solicitados na query, pois são necessários para resolver os campos computados (`logoUrl`, `imageUrl`).
 
 ### Filtering e Sorting
 
