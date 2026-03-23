@@ -54,6 +54,8 @@ jobs:
             EMAGINE_JWT_SECRET=${{ secrets.EMAGINE_JWT_SECRET }}
             MONEXUP_CONNECTION_STRING=${{ secrets.MONEXUP_CONNECTION_STRING }}
             MONEXUP_JWT_SECRET=${{ secrets.MONEXUP_JWT_SECRET }}
+            RABBITMQ_USER=${{ secrets.RABBITMQ_USER }}
+            RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}
             ENVEOF
 
             sed -i 's/^[[:space:]]*//' .env.prod
