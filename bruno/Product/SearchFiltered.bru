@@ -1,0 +1,30 @@
+meta {
+  name: SearchFiltered
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/product/search-filtered
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: emagine
+}
+
+body:json {
+  {
+    "storeSlug": "circulou",
+    "categorySlug": "roupas/camisetas",
+    "filters": [
+      { "filterId": 1, "value": "M" },
+      { "filterId": 2, "value": "true" }
+    ],
+    "priceMin": 20.00,
+    "priceMax": 200.00,
+    "onlyOnSale": false,
+    "pageNum": 1
+  }
+}

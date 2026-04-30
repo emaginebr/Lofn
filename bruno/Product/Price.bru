@@ -1,0 +1,21 @@
+meta {
+  name: Price
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/product/:productId/price
+  body: json
+  auth: none
+}
+
+params:path {
+  productId: 1
+}
+
+body:json {
+  {
+    "optionIds": [1, 2]
+  }
+}

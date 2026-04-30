@@ -1,0 +1,28 @@
+meta {
+  name: InsertGroup
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/producttype/:productTypeId/customization/group/insert
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  productTypeId: 1
+}
+
+body:json {
+  {
+    "label": "Adicionais",
+    "selectionMode": "multi",
+    "isRequired": false,
+    "displayOrder": 1
+  }
+}

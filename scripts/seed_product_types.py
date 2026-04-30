@@ -68,6 +68,17 @@ def get_product_type(token, headers, lofn_url, product_type_id):
     return resp.json()
 
 
+def get_filter_id_map(token, headers, lofn_url, product_type_id):
+    """Retorna dict {label: filterId} para todos os filtros de um product type.
+
+    Útil para que scripts de seed resolvam filterId a partir de labels declarativos
+    nos produtos (ex.: filter_values={'Tamanho': 'M'}) na hora de montar o payload
+    de POST /product/{storeSlug}/insert.
+    """
+    data = get_product_type(token, headers, lofn_url, product_type_id)
+    return {(f.get("label") or "").strip(): f["filterId"] for f in (data.get("filters") or [])}
+
+
 def add_filter(
     token,
     headers,

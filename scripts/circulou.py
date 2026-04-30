@@ -8,6 +8,7 @@ from openai import OpenAI
 from seed_product_types import (
     seed_product_type_tree,
     link_category_to_product_type,
+    get_filter_id_map,
 )
 
 load_dotenv(override=True)
@@ -83,6 +84,13 @@ CATEGORIES = {
             "price": 119.90,
             "discount": 30,
             "featured": True,
+            "filter_values": {
+                "Tamanho": "M",
+                "Marca": "Reserva",
+                "Cor": "Branco",
+                "Gênero": "Unissex",
+                "Material": "Algodão Pima",
+            },
             "description": (
                 "## Kit 3 Camisetas Básicas\n\n"
                 "**30% OFF** no kit com 3 camisetas básicas de algodão pima nas cores "
@@ -101,6 +109,13 @@ CATEGORIES = {
             "price": 49.90,
             "discount": 0,
             "featured": True,
+            "filter_values": {
+                "Tamanho": "M",
+                "Marca": "Hanes",
+                "Cor": "Preto",
+                "Gênero": "Unissex",
+                "Material": "Algodão",
+            },
             "description": (
                 "## Camiseta Vintage Rock 80s\n\n"
                 "Peça **autêntica dos anos 80** garimpada em coleção particular. "
@@ -126,6 +141,13 @@ CATEGORIES = {
             "price": 29.90,
             "discount": 10,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "G",
+                "Marca": "Reserva",
+                "Cor": "Off-white",
+                "Gênero": "Unissex",
+                "Material": "Algodão Pima",
+            },
             "description": (
                 "## Camiseta Básica Algodão Pima\n\n"
                 "Camiseta básica em **algodão pima peruano** — extremamente macia, "
@@ -151,6 +173,13 @@ CATEGORIES = {
             "price": 39.90,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "P",
+                "Marca": "Vintage",
+                "Cor": "Azul/Roxo/Branco",
+                "Gênero": "Unissex",
+                "Material": "Algodão",
+            },
             "description": (
                 "## Camiseta Tie Dye Anos 90\n\n"
                 "Tie dye **autêntico dos anos 90** com pigmentos vibrantes que "
@@ -178,6 +207,13 @@ CATEGORIES = {
             "price": 149.90,
             "discount": 15,
             "featured": True,
+            "filter_values": {
+                "Tamanho": "M",
+                "Marca": "Levi's",
+                "Cor": "Azul",
+                "Gênero": "Unissex",
+                "Material": "Algodão Denim",
+            },
             "description": (
                 "## Calça Jeans Levi's 501 Vintage\n\n"
                 "**Levi's 501** original — o jeans mais icônico de todos os tempos. "
@@ -204,6 +240,13 @@ CATEGORIES = {
             "price": 89.90,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "M",
+                "Marca": "Animale",
+                "Cor": "Caramelo",
+                "Gênero": "Feminino",
+                "Material": "Linho",
+            },
             "description": (
                 "## Calça Wide Leg Linho\n\n"
                 "Calça **wide leg em linho puro** — perua, fresca e elegante. "
@@ -229,6 +272,13 @@ CATEGORIES = {
             "price": 69.90,
             "discount": 20,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "G",
+                "Marca": "Streetwear",
+                "Cor": "Verde Militar",
+                "Gênero": "Unissex",
+                "Material": "Algodão/Poliéster (Ripstop)",
+            },
             "description": (
                 "## Calça Cargo Verde Militar\n\n"
                 "Cargo **verde militar autêntica** com bolsões funcionais — "
@@ -257,6 +307,13 @@ CATEGORIES = {
             "price": 119.90,
             "discount": 0,
             "featured": True,
+            "filter_values": {
+                "Tamanho": "M",
+                "Marca": "Vintage",
+                "Cor": "Terracota",
+                "Gênero": "Feminino",
+                "Material": "Viscose",
+            },
             "description": (
                 "## Vestido Midi Floral Anos 70\n\n"
                 "**Vestido autêntico dos anos 70** com estampa floral em tons quentes — "
@@ -283,6 +340,13 @@ CATEGORIES = {
             "price": 79.90,
             "discount": 10,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "P",
+                "Marca": "Zara",
+                "Cor": "Champanhe",
+                "Gênero": "Feminino",
+                "Material": "Cetim (Poliéster/Elastano)",
+            },
             "description": (
                 "## Vestido Slip Dress Cetim\n\n"
                 "**Slip dress** em cetim cor champanhe — alças finas, caimento fluido, "
@@ -309,6 +373,13 @@ CATEGORIES = {
             "price": 99.90,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "P",
+                "Marca": "Artesanal",
+                "Cor": "Bege/Marrom/Off-white",
+                "Gênero": "Feminino",
+                "Material": "Lã/Acrílico",
+            },
             "description": (
                 "## Vestido Tricô Tricolor\n\n"
                 "Vestido em **tricô artesanal** com listras tricolor — "
@@ -337,6 +408,13 @@ CATEGORIES = {
             "price": 159.90,
             "discount": 15,
             "featured": True,
+            "filter_values": {
+                "Tamanho": "M",
+                "Marca": "Levi's",
+                "Cor": "Azul",
+                "Gênero": "Unissex",
+                "Material": "Algodão Denim",
+            },
             "description": (
                 "## Jaqueta Jeans Trucker Vintage\n\n"
                 "**Jaqueta jeans trucker** estilo Levi's clássica — bolsos no peito, "
@@ -363,6 +441,13 @@ CATEGORIES = {
             "price": 199.90,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "M",
+                "Marca": "Made in Italy",
+                "Cor": "Camel",
+                "Gênero": "Unissex",
+                "Material": "Lã/Poliamida",
+            },
             "description": (
                 "## Casaco Lã Trench Coat\n\n"
                 "**Trench coat** em lã pura cor camel — gola alta, cinto na cintura, "
@@ -389,6 +474,13 @@ CATEGORIES = {
             "price": 89.90,
             "discount": 20,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "G",
+                "Marca": "Artesanal",
+                "Cor": "Off-white",
+                "Gênero": "Unissex",
+                "Material": "Acrílico/Lã",
+            },
             "description": (
                 "## Cardigan Tricô Oversized\n\n"
                 "**Cardigan oversized** em tricô grosso cor off-white — "
@@ -417,6 +509,12 @@ CATEGORIES = {
             "price": 149.00,
             "discount": 25,
             "featured": True,
+            "filter_values": {
+                "Marca": "Artesanal",
+                "Cor": "Caramelo",
+                "Material": "Couro Legítimo",
+                "Gênero": "Unissex",
+            },
             "description": (
                 "## Combo Cinto + Carteira de Couro\n\n"
                 "**25% OFF** no combo de cinto trançado + carteira slim, ambos em "
@@ -432,6 +530,12 @@ CATEGORIES = {
             "price": 179.90,
             "discount": 10,
             "featured": True,
+            "filter_values": {
+                "Marca": "Vintage",
+                "Cor": "Caramelo",
+                "Material": "Couro Bovino",
+                "Gênero": "Feminino",
+            },
             "description": (
                 "## Bolsa Couro Caramelo Vintage\n\n"
                 "**Bolsa em couro legítimo** cor caramelo, modelo crossbody médio. "
@@ -458,6 +562,12 @@ CATEGORIES = {
             "price": 49.90,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Marca": "Artesanal",
+                "Cor": "Marrom Escuro",
+                "Material": "Couro Legítimo",
+                "Gênero": "Unissex",
+            },
             "description": (
                 "## Cinto Couro Trançado\n\n"
                 "**Cinto em couro trançado** marrom escuro — fivela de metal envelhecido. "
@@ -484,6 +594,12 @@ CATEGORIES = {
             "price": 39.90,
             "discount": 25,
             "featured": False,
+            "filter_values": {
+                "Marca": "Artesanal",
+                "Cor": "Pastel (Rosa/Azul/Verde)",
+                "Material": "Seda Pura",
+                "Gênero": "Feminino",
+            },
             "description": (
                 "## Lenço Seda Estampado\n\n"
                 "**Lenço quadrado em seda pura** com estampa floral em tons pastéis. "
@@ -585,21 +701,28 @@ def get_or_create_global_category(token, name, parent_id=None):
     return data["categoryId"]
 
 
-def create_product(token, store_slug, category_id, product):
+def create_product(token, store_slug, category_id, product, filter_id_map=None):
     print(f"   Criando produto '{product['name']}'...")
+    payload = {
+        "categoryId": category_id,
+        "name": product["name"],
+        "description": product["description"],
+        "price": product["price"],
+        "discount": product.get("discount", 0),
+        "frequency": 0,
+        "limit": 0,
+        "status": 1,  # Active
+        "featured": product.get("featured", False),
+    }
+    if filter_id_map and product.get("filter_values"):
+        payload["filterValues"] = [
+            {"filterId": filter_id_map[label], "value": str(value)}
+            for label, value in product["filter_values"].items()
+            if label in filter_id_map
+        ]
     resp = requests.post(
         f"{LOFN_URL}/product/{store_slug}/insert",
-        json={
-            "categoryId": category_id,
-            "name": product["name"],
-            "description": product["description"],
-            "price": product["price"],
-            "discount": product.get("discount", 0),
-            "frequency": 0,
-            "limit": 0,
-            "status": 1,  # Active
-            "featured": product.get("featured", False),
-        },
+        json=payload,
         headers={**COMMON_HEADERS, "Authorization": f"Bearer {token}"},
     )
     if not resp.ok:
@@ -685,11 +808,17 @@ def main():
             token, COMMON_HEADERS, LOFN_URL, spec
         )
 
+    filter_ids_by_type = {
+        type_name: get_filter_id_map(token, COMMON_HEADERS, LOFN_URL, type_id)
+        for type_name, type_id in type_id_by_name.items()
+    }
+
     for category_name, products in CATEGORIES.items():
         print(f"\n>> Subcategoria: {ROOT_CATEGORY}/{category_name}")
         category_id = get_or_create_global_category(token, category_name, parent_id=root_category_id)
 
         type_key = CATEGORY_TYPE_LINKS.get(category_name)
+        filter_id_map = filter_ids_by_type.get(type_key) if type_key else None
         if type_key and type_key in type_id_by_name:
             link_category_to_product_type(
                 token, COMMON_HEADERS, LOFN_URL,
@@ -698,7 +827,7 @@ def main():
 
         for product in products:
             product_id, product_slug = create_product(
-                token, store_slug, category_id, product
+                token, store_slug, category_id, product, filter_id_map
             )
 
             filepath = image_map[product["name"]]

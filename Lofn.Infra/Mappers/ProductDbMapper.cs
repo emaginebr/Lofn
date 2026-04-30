@@ -17,6 +17,7 @@ namespace Lofn.Infra.Mappers
                 Slug = row.Slug,
                 Description = row.Description,
                 Price = row.Price,
+                Discount = row.Discount,
                 Frequency = row.Frequency,
                 Limit = row.Limit,
                 Status = (ProductStatusEnum)row.Status,
@@ -36,6 +37,7 @@ namespace Lofn.Infra.Mappers
             row.Slug = md.Slug;
             row.Description = md.Description;
             row.Price = md.Price;
+            row.Discount = md.Discount;
             row.Frequency = md.Frequency;
             row.Limit = md.Limit;
             row.Status = (int)md.Status;

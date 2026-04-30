@@ -11,15 +11,24 @@ post {
 }
 
 body:graphql {
-  {
-    products(skip: 0, take: 10) {
+  query ($storeSlug: String!, $where: ProductFilterInput, $skip: Int, $take: Int) {
+    featuredProducts(storeSlug: $storeSlug, where: $where, skip: $skip, take: $take) {
       items {
         productId
         name
         slug
         price
+        discount
         imageUrl
         featured
+        filterValues {
+          filterId
+          value
+          filter {
+            label
+            dataType
+          }
+        }
         productImages {
           imageId
           image
@@ -27,11 +36,19 @@ body:graphql {
           sortOrder
         }
       }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-      }
+      pageInfo { hasNextPage hasPreviousPage }
       totalCount
     }
+  }
+}
+
+body:graphql:vars {
+  {
+    "storeSlug": "circulou",
+    "where": {
+      "discount": { "gt": 0 }
+    },
+    "skip": 0,
+    "take": 10
   }
 }

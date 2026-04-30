@@ -1,0 +1,29 @@
+meta {
+  name: InsertFilter
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/producttype/:productTypeId/filter/insert
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  productTypeId: 1
+}
+
+body:json {
+  {
+    "label": "Tamanho",
+    "dataType": "enum",
+    "isRequired": true,
+    "displayOrder": 1,
+    "allowedValues": ["P", "M", "G", "GG"]
+  }
+}

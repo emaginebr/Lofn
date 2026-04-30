@@ -21,6 +21,18 @@ namespace Lofn.Infra.Interfaces.Repository
             long categoryId,
             IList<long> categoryIdsRollup,
             IList<(long FilterId, string Value)> filters,
-            int pageNum);
+            int pageNum,
+            double? priceMin = null,
+            double? priceMax = null,
+            bool onlyOnSale = false);
+
+        Task<IDictionary<long, IList<string>>> GetAvailableFilterValuesAsync(
+            long? storeId,
+            IList<long> categoryIdsRollup,
+            IList<(long FilterId, string Value)> filters,
+            IList<long> filterIdsToReturn,
+            double? priceMin = null,
+            double? priceMax = null,
+            bool onlyOnSale = false);
     }
 }

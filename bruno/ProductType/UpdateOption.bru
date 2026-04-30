@@ -1,0 +1,25 @@
+meta {
+  name: UpdateOption
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/producttype/customization/option/update
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "optionId": 1,
+    "label": "Bacon Extra",
+    "priceDeltaCents": 600,
+    "isDefault": false,
+    "displayOrder": 1
+  }
+}

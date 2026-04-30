@@ -1,0 +1,25 @@
+meta {
+  name: UpdateGroup
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/producttype/customization/group/update
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "groupId": 1,
+    "label": "Adicionais",
+    "selectionMode": "multi",
+    "isRequired": false,
+    "displayOrder": 1
+  }
+}

@@ -120,6 +120,7 @@ namespace Lofn.Domain.Services
         {
             var info = ProductMapper.ToInfo(md);
             info.Images = await _productImageService.ListByProductAsync(md.ProductId);
+            info.ImageUrl = info.Images?.FirstOrDefault()?.ImageUrl;
             return info;
         }
 
@@ -294,7 +295,9 @@ namespace Lofn.Domain.Services
             long? categoryId = null;
             if (!string.IsNullOrEmpty(categorySlug))
             {
-                var category = await _categoryRepository.GetBySlugAndStoreAsync(store.StoreId, categorySlug);
+                var category = _tenantResolver.Marketplace
+                    ? await _categoryRepository.GetBySlugAsync(categorySlug)
+                    : await _categoryRepository.GetBySlugAndStoreAsync(store.StoreId, categorySlug);
                 if (category == null)
                     throw new Exception("Category not found");
                 categoryId = category.CategoryId;
@@ -353,7 +356,9 @@ namespace Lofn.Domain.Services
                     throw new Exception("Store not found");
                 storeId = store.StoreId;
 
-                category = await _categoryRepository.GetBySlugAndStoreAsync(store.StoreId, param.CategorySlug);
+                category = _tenantResolver.Marketplace
+                    ? await _categoryRepository.GetBySlugAsync(param.CategorySlug)
+                    : await _categoryRepository.GetBySlugAndStoreAsync(store.StoreId, param.CategorySlug);
             }
             else
             {
@@ -404,13 +409,41 @@ namespace Lofn.Domain.Services
 
             var pageNum = param.PageNum > 0 ? param.PageNum : 1;
             var (items, pageCount, totalItems) = await _productRepository.SearchByFilterValuesAsync(
-                storeId, category.CategoryId, rollup, validPairs, pageNum);
+                storeId, category.CategoryId, rollup, validPairs, pageNum,
+                param.PriceMin, param.PriceMax, param.OnlyOnSale);
 
             var products = new List<ProductInfo>();
             foreach (var item in items)
             {
                 item.FilterValues = await _filterValueRepository.GetByProductAsync(item.ProductId);
-                products.Add(ProductMapper.ToInfo(item, resolution?.ProductType));
+                var info = await GetProductInfoAsync(item);
+                info.AppliedProductTypeId = resolution?.ProductType?.ProductTypeId;
+                products.Add(info);
+            }
+
+            var availableFilters = new List<AvailableFilterInfo>();
+            if (resolution?.ProductType?.Filters != null && resolution.ProductType.Filters.Count > 0)
+            {
+                var filterIds = resolution.ProductType.Filters.Select(f => f.FilterId).ToList();
+                var valuesByFilterId = await _productRepository.GetAvailableFilterValuesAsync(
+                    storeId, rollup, validPairs, filterIds,
+                    param.PriceMin, param.PriceMax, param.OnlyOnSale);
+
+                foreach (var f in resolution.ProductType.Filters.OrderBy(f => f.DisplayOrder))
+                {
+                    if (!valuesByFilterId.TryGetValue(f.FilterId, out var vals) || vals.Count == 0)
+                        continue;
+
+                    availableFilters.Add(new AvailableFilterInfo
+                    {
+                        FilterId = f.FilterId,
+                        Label = f.Label,
+                        DataType = f.DataType,
+                        IsRequired = f.IsRequired,
+                        DisplayOrder = f.DisplayOrder,
+                        AvailableValues = vals.OrderBy(v => v).ToList()
+                    });
+                }
             }
 
             return new ProductSearchFilteredResult
@@ -421,6 +454,7 @@ namespace Lofn.Domain.Services
                 TotalItems = totalItems,
                 AppliedProductTypeId = resolution?.ProductType?.ProductTypeId,
                 AppliedFilters = appliedFilters,
+                AvailableFilters = availableFilters,
                 IgnoredFilterIds = ignoredFilterIds
             };
         }

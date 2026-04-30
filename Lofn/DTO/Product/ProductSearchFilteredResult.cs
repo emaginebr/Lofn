@@ -23,6 +23,9 @@ namespace Lofn.DTO.Product
         [JsonPropertyName("appliedFilters")]
         public IList<AppliedFilterInfo> AppliedFilters { get; set; } = new List<AppliedFilterInfo>();
 
+        [JsonPropertyName("availableFilters")]
+        public IList<AvailableFilterInfo> AvailableFilters { get; set; } = new List<AvailableFilterInfo>();
+
         [JsonPropertyName("ignoredFilterIds")]
         public IList<long> IgnoredFilterIds { get; set; } = new List<long>();
     }

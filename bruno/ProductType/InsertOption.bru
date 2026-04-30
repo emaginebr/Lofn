@@ -1,0 +1,28 @@
+meta {
+  name: InsertOption
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/producttype/customization/group/:groupId/option/insert
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  groupId: 1
+}
+
+body:json {
+  {
+    "label": "Bacon Extra",
+    "priceDeltaCents": 500,
+    "isDefault": false,
+    "displayOrder": 1
+  }
+}

@@ -138,28 +138,13 @@ namespace Lofn.Infra.Repository
             long categoryId,
             IList<long> categoryIdsRollup,
             IList<(long FilterId, string Value)> filters,
-            int pageNum)
+            int pageNum,
+            double? priceMin = null,
+            double? priceMax = null,
+            bool onlyOnSale = false)
         {
             var rollup = categoryIdsRollup ?? new List<long> { categoryId };
-
-            var q = _context.Products
-                .Where(p => p.Status == STATUS_ACTIVE
-                    && p.CategoryId.HasValue
-                    && rollup.Contains(p.CategoryId.Value));
-
-            if (storeId.HasValue && storeId.Value > 0)
-                q = q.Where(p => p.StoreId == storeId.Value);
-
-            if (filters != null)
-            {
-                foreach (var (filterId, value) in filters)
-                {
-                    var fId = filterId;
-                    var v = value;
-                    q = q.Where(p => _context.ProductFilterValues
-                        .Any(pfv => pfv.ProductId == p.ProductId && pfv.FilterId == fId && pfv.Value == v));
-                }
-            }
+            var q = BuildFilteredProductQuery(storeId, rollup, filters, priceMin, priceMax, onlyOnSale);
 
             var totalCount = await q.CountAsync();
             var pageCount = (int)Math.Ceiling((double)totalCount / PAGE_SIZE);
@@ -172,6 +157,75 @@ namespace Lofn.Infra.Repository
 
             IList<ProductModel> items = rows.Select(ProductDbMapper.ToModel).ToList();
             return (items, pageCount, totalCount);
+        }
+
+        public async Task<IDictionary<long, IList<string>>> GetAvailableFilterValuesAsync(
+            long? storeId,
+            IList<long> categoryIdsRollup,
+            IList<(long FilterId, string Value)> filters,
+            IList<long> filterIdsToReturn,
+            double? priceMin = null,
+            double? priceMax = null,
+            bool onlyOnSale = false)
+        {
+            var result = new Dictionary<long, IList<string>>();
+            if (filterIdsToReturn == null || filterIdsToReturn.Count == 0)
+                return result;
+
+            var rollup = categoryIdsRollup ?? new List<long>();
+            var productQuery = BuildFilteredProductQuery(storeId, rollup, filters, priceMin, priceMax, onlyOnSale)
+                .Select(p => p.ProductId);
+
+            var grouped = await _context.ProductFilterValues
+                .Where(pfv => filterIdsToReturn.Contains(pfv.FilterId))
+                .Where(pfv => productQuery.Contains(pfv.ProductId))
+                .GroupBy(pfv => pfv.FilterId)
+                .Select(g => new { FilterId = g.Key, Values = g.Select(pfv => pfv.Value).Distinct().ToList() })
+                .ToListAsync();
+
+            foreach (var entry in grouped)
+                result[entry.FilterId] = entry.Values;
+
+            return result;
+        }
+
+        private IQueryable<Product> BuildFilteredProductQuery(
+            long? storeId,
+            IList<long> rollup,
+            IList<(long FilterId, string Value)> filters,
+            double? priceMin,
+            double? priceMax,
+            bool onlyOnSale)
+        {
+            var q = _context.Products
+                .Where(p => p.Status == STATUS_ACTIVE
+                    && p.CategoryId.HasValue
+                    && rollup.Contains(p.CategoryId.Value));
+
+            if (storeId.HasValue && storeId.Value > 0)
+                q = q.Where(p => p.StoreId == storeId.Value);
+
+            if (priceMin.HasValue)
+                q = q.Where(p => p.Price >= priceMin.Value);
+
+            if (priceMax.HasValue)
+                q = q.Where(p => p.Price <= priceMax.Value);
+
+            if (onlyOnSale)
+                q = q.Where(p => p.Discount > 0);
+
+            if (filters != null)
+            {
+                foreach (var (filterId, value) in filters)
+                {
+                    var fId = filterId;
+                    var v = value;
+                    q = q.Where(p => _context.ProductFilterValues
+                        .Any(pfv => pfv.ProductId == p.ProductId && pfv.FilterId == fId && pfv.Value == v));
+                }
+            }
+
+            return q;
         }
     }
 }

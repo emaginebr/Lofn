@@ -1,0 +1,19 @@
+meta {
+  name: UnlinkProductType
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/category/:categoryId/producttype
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  categoryId: 1
+}

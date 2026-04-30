@@ -1,0 +1,19 @@
+meta {
+  name: DeleteOption
+  type: http
+  seq: 14
+}
+
+delete {
+  url: {{baseUrl}}/producttype/customization/option/delete/:optionId
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  optionId: 1
+}

@@ -8,6 +8,7 @@ from openai import OpenAI
 from seed_product_types import (
     seed_product_type_tree,
     link_category_to_product_type,
+    get_filter_id_map,
 )
 
 load_dotenv(override=True)
@@ -105,6 +106,11 @@ CATEGORIES = {
             "price": 34.90,
             "discount": 0,
             "featured": True,
+            "filter_values": {
+                "Tamanho": "Médio",
+                "Vegetariano": "false",
+                "Calorias": "780",
+            },
             "description": (
                 "## Smash Burger Duplo\n\n"
                 "O clássico **Smash Burger** com dois discos de carne **smashados** na chapa, "
@@ -130,6 +136,11 @@ CATEGORIES = {
             "price": 39.90,
             "discount": 10,
             "featured": True,
+            "filter_values": {
+                "Tamanho": "Grande",
+                "Vegetariano": "false",
+                "Calorias": "920",
+            },
             "description": (
                 "## Burger Bacon Crispy\n\n"
                 "Para os amantes de bacon: camadas generosas de **bacon crocante** "
@@ -155,6 +166,11 @@ CATEGORIES = {
             "price": 89.90,
             "discount": 30,
             "featured": True,
+            "filter_values": {
+                "Tamanho": "Grande",
+                "Vegetariano": "false",
+                "Calorias": "3200",
+            },
             "description": (
                 "## Combo Família Smash\n\n"
                 "**Promoção limitada**: 4 Smash Burger Duplos + 2 batatas grandes "
@@ -171,6 +187,11 @@ CATEGORIES = {
             "price": 32.90,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "Médio",
+                "Vegetariano": "true",
+                "Calorias": "550",
+            },
             "description": (
                 "## Veggie Burger\n\n"
                 "Nosso hambúrguer **100% vegetal**, feito com grão-de-bico, "
@@ -198,6 +219,11 @@ CATEGORIES = {
             "price": 18.90,
             "discount": 0,
             "featured": True,
+            "filter_values": {
+                "Tamanho": "Médio",
+                "Vegetariano": "true",
+                "Calorias": "450",
+            },
             "description": (
                 "## Batata Frita Rústica\n\n"
                 "Batatas cortadas com casca em formato **wedge**, fritas até "
@@ -222,6 +248,11 @@ CATEGORIES = {
             "price": 16.90,
             "discount": 15,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "Médio",
+                "Vegetariano": "true",
+                "Calorias": "380",
+            },
             "description": (
                 "## Onion Rings\n\n"
                 "Anéis de cebola empanados em massa **beer batter** "
@@ -245,6 +276,11 @@ CATEGORIES = {
             "price": 49.90,
             "discount": 25,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "Grande",
+                "Vegetariano": "true",
+                "Calorias": "1200",
+            },
             "description": (
                 "## Combo Acompanhamentos Trio\n\n"
                 "**25% OFF**: porções de Batata Frita Rústica, Onion Rings e "
@@ -261,6 +297,11 @@ CATEGORIES = {
             "price": 22.90,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "Médio",
+                "Vegetariano": "true",
+                "Calorias": "520",
+            },
             "description": (
                 "## Mac & Cheese\n\n"
                 "Macarrão cotovelo com molho **cremoso de três queijos**, "
@@ -287,6 +328,11 @@ CATEGORIES = {
             "price": 24.90,
             "discount": 0,
             "featured": True,
+            "filter_values": {
+                "Tamanho": "Médio",
+                "Vegetariano": "true",
+                "Calorias": "520",
+            },
             "description": (
                 "## Brownie com Sorvete\n\n"
                 "Brownie de chocolate **70% cacau** servido quente com "
@@ -311,6 +357,11 @@ CATEGORIES = {
             "price": 19.90,
             "discount": 20,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "Grande",
+                "Vegetariano": "true",
+                "Calorias": "680",
+            },
             "description": (
                 "## Milkshake Nutella\n\n"
                 "Milkshake cremoso de **Nutella** batido com sorvete de creme "
@@ -335,6 +386,11 @@ CATEGORIES = {
             "price": 14.90,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Tamanho": "Pequeno",
+                "Vegetariano": "true",
+                "Calorias": "420",
+            },
             "description": (
                 "## Churros Recheados\n\n"
                 "Churros artesanais crocantes por fora, macios por dentro, "
@@ -361,6 +417,11 @@ CATEGORIES = {
             "price": 12.90,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Volume_ml": "500",
+                "Gelada": "true",
+                "Alcoólica": "false",
+            },
             "description": (
                 "## Limonada Suíça\n\n"
                 "Limonada batida com **limão siciliano**, leite condensado "
@@ -385,6 +446,11 @@ CATEGORIES = {
             "price": 10.90,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Volume_ml": "400",
+                "Gelada": "true",
+                "Alcoólica": "false",
+            },
             "description": (
                 "## Suco Natural de Laranja\n\n"
                 "Suco de laranja **espremido na hora**, sem adição de "
@@ -409,6 +475,11 @@ CATEGORIES = {
             "price": 11.90,
             "discount": 10,
             "featured": True,
+            "filter_values": {
+                "Volume_ml": "500",
+                "Gelada": "true",
+                "Alcoólica": "false",
+            },
             "description": (
                 "## Iced Tea Pêssego\n\n"
                 "Chá gelado de **pêssego** feito com chá preto infusionado "
@@ -509,21 +580,28 @@ def get_or_create_global_category(token, name, parent_id=None):
     return data["categoryId"]
 
 
-def create_product(token, store_slug, category_id, product):
+def create_product(token, store_slug, category_id, product, filter_id_map=None):
     print(f"   Criando produto '{product['name']}'...")
+    payload = {
+        "categoryId": category_id,
+        "name": product["name"],
+        "description": product["description"],
+        "price": product["price"],
+        "discount": product.get("discount", 0),
+        "frequency": 0,
+        "limit": 0,
+        "status": 1,  # Active
+        "featured": product.get("featured", False),
+    }
+    if filter_id_map and product.get("filter_values"):
+        payload["filterValues"] = [
+            {"filterId": filter_id_map[label], "value": str(value)}
+            for label, value in product["filter_values"].items()
+            if label in filter_id_map
+        ]
     resp = requests.post(
         f"{LOFN_URL}/product/{store_slug}/insert",
-        json={
-            "categoryId": category_id,
-            "name": product["name"],
-            "description": product["description"],
-            "price": product["price"],
-            "discount": product.get("discount", 0),
-            "frequency": 0,
-            "limit": 0,
-            "status": 1,  # Active
-            "featured": product.get("featured", False),
-        },
+        json=payload,
         headers={**COMMON_HEADERS, "Authorization": f"Bearer {token}"},
     )
     if not resp.ok:
@@ -609,11 +687,17 @@ def main():
             token, COMMON_HEADERS, LOFN_URL, spec
         )
 
+    filter_ids_by_type = {
+        type_name: get_filter_id_map(token, COMMON_HEADERS, LOFN_URL, type_id)
+        for type_name, type_id in type_id_by_name.items()
+    }
+
     for category_name, products in CATEGORIES.items():
         print(f"\n>> Subcategoria: {ROOT_CATEGORY}/{category_name}")
         category_id = get_or_create_global_category(token, category_name, parent_id=root_category_id)
 
         type_key = CATEGORY_TYPE_LINKS.get(category_name)
+        filter_id_map = filter_ids_by_type.get(type_key) if type_key else None
         if type_key and type_key in type_id_by_name:
             link_category_to_product_type(
                 token, COMMON_HEADERS, LOFN_URL,
@@ -622,7 +706,7 @@ def main():
 
         for product in products:
             product_id, product_slug = create_product(
-                token, store_slug, category_id, product
+                token, store_slug, category_id, product, filter_id_map
             )
 
             filepath = image_map[product["name"]]

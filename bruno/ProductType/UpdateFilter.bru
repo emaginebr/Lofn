@@ -1,0 +1,25 @@
+meta {
+  name: UpdateFilter
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/producttype/filter/update
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "filterId": 1,
+    "label": "Tamanho",
+    "isRequired": true,
+    "displayOrder": 1,
+    "allowedValues": ["PP", "P", "M", "G", "GG"]
+  }
+}

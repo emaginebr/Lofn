@@ -1,0 +1,20 @@
+meta {
+  name: LinkProductType
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/category-global/:categoryId/producttype/:productTypeId
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  categoryId: 1
+  productTypeId: 1
+}

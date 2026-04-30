@@ -8,6 +8,7 @@ from openai import OpenAI
 from seed_product_types import (
     seed_product_type_tree,
     link_category_to_product_type,
+    get_filter_id_map,
 )
 
 load_dotenv(override=True)
@@ -122,6 +123,12 @@ CATEGORIES = {
             "price": 6499.00,
             "discount": 35,
             "featured": True,
+            "filter_values": {
+                "Marca": "Acer",
+                "Modelo": "Nitro Gamer",
+                "Garantia_meses": "12",
+                "Sistema_Operacional": "Windows",
+            },
             "description": (
                 "## Notebook Gamer Liquidação\n\n"
                 "**MEGA PROMOÇÃO**: notebook gamer com configuração robusta a "
@@ -142,6 +149,12 @@ CATEGORIES = {
             "price": 12999.00,
             "discount": 0,
             "featured": True,
+            "filter_values": {
+                "Marca": "Apple",
+                "Modelo": "MacBook Air M3",
+                "Garantia_meses": "12",
+                "Sistema_Operacional": "macOS",
+            },
             "description": (
                 "## MacBook Air M3\n\n"
                 "O **MacBook Air** com o revolucionário chip **Apple M3** entrega desempenho excepcional "
@@ -169,6 +182,12 @@ CATEGORIES = {
             "name": "Dell Inspiron 15",
             "price": 3499.00,
             "discount": 10,
+            "filter_values": {
+                "Marca": "Dell",
+                "Modelo": "Inspiron 15",
+                "Garantia_meses": "12",
+                "Sistema_Operacional": "Windows",
+            },
             "description": (
                 "## Dell Inspiron 15\n\n"
                 "O **Dell Inspiron 15** é a escolha inteligente para quem precisa de um notebook "
@@ -194,6 +213,12 @@ CATEGORIES = {
         {
             "name": "Lenovo IdeaPad 3",
             "price": 2899.00,
+            "filter_values": {
+                "Marca": "Lenovo",
+                "Modelo": "IdeaPad 3",
+                "Garantia_meses": "12",
+                "Sistema_Operacional": "Windows",
+            },
             "description": (
                 "## Lenovo IdeaPad 3\n\n"
                 "O **Lenovo IdeaPad 3** combina desempenho AMD com um preço acessível, "
@@ -219,6 +244,12 @@ CATEGORIES = {
         {
             "name": "ASUS VivoBook",
             "price": 3199.00,
+            "filter_values": {
+                "Marca": "ASUS",
+                "Modelo": "VivoBook 15",
+                "Garantia_meses": "12",
+                "Sistema_Operacional": "Windows",
+            },
             "description": (
                 "## ASUS VivoBook 15\n\n"
                 "O **ASUS VivoBook 15** é um notebook elegante e leve, projetado para "
@@ -246,6 +277,12 @@ CATEGORIES = {
             "price": 5499.00,
             "discount": 15,
             "featured": True,
+            "filter_values": {
+                "Marca": "Acer",
+                "Modelo": "Nitro 5",
+                "Garantia_meses": "12",
+                "Sistema_Operacional": "Windows",
+            },
             "description": (
                 "## Acer Nitro 5\n\n"
                 "O **Acer Nitro 5** é um notebook gamer de entrada que entrega performance "
@@ -279,6 +316,12 @@ CATEGORIES = {
         {
             "name": "AMD Ryzen 7 5800X",
             "price": 1599.00,
+            "filter_values": {
+                "Marca": "AMD",
+                "Modelo": "Ryzen 7 5800X",
+                "Capacidade": "8 cores / 16 threads",
+                "Garantia_meses": "36",
+            },
             "description": (
                 "## AMD Ryzen 7 5800X\n\n"
                 "O **Ryzen 7 5800X** é um processador de alto desempenho da arquitetura **Zen 3**, "
@@ -306,6 +349,12 @@ CATEGORIES = {
             "price": 2299.00,
             "discount": 5,
             "featured": True,
+            "filter_values": {
+                "Marca": "Intel",
+                "Modelo": "Core i7-13700K",
+                "Capacidade": "16 cores / 24 threads",
+                "Garantia_meses": "36",
+            },
             "description": (
                 "## Intel Core i7-13700K\n\n"
                 "O **i7-13700K** da 13ª geração (Raptor Lake) é uma potência híbrida "
@@ -332,6 +381,12 @@ CATEGORIES = {
         {
             "name": "AMD Ryzen 5 5600X",
             "price": 899.00,
+            "filter_values": {
+                "Marca": "AMD",
+                "Modelo": "Ryzen 5 5600X",
+                "Capacidade": "6 cores / 12 threads",
+                "Garantia_meses": "36",
+            },
             "description": (
                 "## AMD Ryzen 5 5600X\n\n"
                 "O **Ryzen 5 5600X** é o processador mais popular da série Zen 3, "
@@ -357,6 +412,12 @@ CATEGORIES = {
         {
             "name": "Intel Core i5-13400F",
             "price": 1199.00,
+            "filter_values": {
+                "Marca": "Intel",
+                "Modelo": "Core i5-13400F",
+                "Capacidade": "10 cores / 16 threads",
+                "Garantia_meses": "36",
+            },
             "description": (
                 "## Intel Core i5-13400F\n\n"
                 "O **i5-13400F** é um processador de excelente valor, com arquitetura "
@@ -383,6 +444,12 @@ CATEGORIES = {
         {
             "name": "AMD Ryzen 9 7900X",
             "price": 3199.00,
+            "filter_values": {
+                "Marca": "AMD",
+                "Modelo": "Ryzen 9 7900X",
+                "Capacidade": "12 cores / 24 threads",
+                "Garantia_meses": "36",
+            },
             "description": (
                 "## AMD Ryzen 9 7900X\n\n"
                 "O **Ryzen 9 7900X** é um monstro de produtividade com a nova arquitetura "
@@ -415,6 +482,12 @@ CATEGORIES = {
         {
             "name": "Corsair Vengeance 16GB DDR4",
             "price": 299.00,
+            "filter_values": {
+                "Marca": "Corsair",
+                "Modelo": "Vengeance LPX",
+                "Capacidade": "16GB DDR4 3200MHz",
+                "Garantia_meses": "120",
+            },
             "description": (
                 "## Corsair Vengeance LPX 16GB DDR4\n\n"
                 "A **Corsair Vengeance LPX** é referência em confiabilidade e performance "
@@ -440,6 +513,12 @@ CATEGORIES = {
         {
             "name": "Kingston Fury 32GB DDR5",
             "price": 699.00,
+            "filter_values": {
+                "Marca": "Kingston",
+                "Modelo": "Fury Beast",
+                "Capacidade": "32GB DDR5 5200MHz",
+                "Garantia_meses": "120",
+            },
             "description": (
                 "## Kingston Fury Beast 32GB DDR5\n\n"
                 "A **Kingston Fury Beast DDR5** leva sua build para a próxima geração "
@@ -465,6 +544,12 @@ CATEGORIES = {
         {
             "name": "HyperX 8GB DDR4",
             "price": 159.00,
+            "filter_values": {
+                "Marca": "HyperX",
+                "Modelo": "Fury",
+                "Capacidade": "8GB DDR4 2666MHz",
+                "Garantia_meses": "120",
+            },
             "description": (
                 "## HyperX Fury 8GB DDR4\n\n"
                 "A **HyperX Fury 8GB** é a memória de entrada ideal para builds econômicas, "
@@ -489,6 +574,12 @@ CATEGORIES = {
         {
             "name": "Crucial 16GB DDR5",
             "price": 449.00,
+            "filter_values": {
+                "Marca": "Crucial",
+                "Modelo": "DDR5 Standard",
+                "Capacidade": "16GB DDR5 4800MHz",
+                "Garantia_meses": "120",
+            },
             "description": (
                 "## Crucial 16GB DDR5\n\n"
                 "A **Crucial DDR5** oferece a tecnologia de próxima geração da **Micron** "
@@ -513,6 +604,12 @@ CATEGORIES = {
         {
             "name": "G.Skill Trident 32GB DDR4",
             "price": 599.00,
+            "filter_values": {
+                "Marca": "G.Skill",
+                "Modelo": "Trident Z RGB",
+                "Capacidade": "32GB DDR4 3600MHz",
+                "Garantia_meses": "120",
+            },
             "description": (
                 "## G.Skill Trident Z RGB 32GB DDR4\n\n"
                 "A **G.Skill Trident Z RGB** é a memória DDR4 premium para quem quer "
@@ -542,6 +639,12 @@ CATEGORIES = {
             "price": 499.00,
             "discount": 20,
             "featured": True,
+            "filter_values": {
+                "Marca": "Samsung",
+                "Modelo": "970 EVO Plus",
+                "Capacidade": "1TB NVMe",
+                "Garantia_meses": "60",
+            },
             "description": (
                 "## Samsung 970 EVO Plus 1TB NVMe\n\n"
                 "O **970 EVO Plus** é um SSD NVMe de referência no mercado, "
@@ -567,6 +670,12 @@ CATEGORIES = {
         {
             "name": "WD Blue 2TB HDD",
             "price": 399.00,
+            "filter_values": {
+                "Marca": "Western Digital",
+                "Modelo": "Blue HDD",
+                "Capacidade": "2TB SATA III",
+                "Garantia_meses": "24",
+            },
             "description": (
                 "## Western Digital Blue 2TB HDD\n\n"
                 "O **WD Blue** é o HD mecânico mais confiável do mercado — "
@@ -592,6 +701,12 @@ CATEGORIES = {
             "name": "Kingston A400 480GB SSD",
             "price": 199.00,
             "discount": 10,
+            "filter_values": {
+                "Marca": "Kingston",
+                "Modelo": "A400",
+                "Capacidade": "480GB SATA III",
+                "Garantia_meses": "36",
+            },
             "description": (
                 "## Kingston A400 480GB SSD\n\n"
                 "O **Kingston A400** é o upgrade mais impactante que você pode fazer "
@@ -617,6 +732,12 @@ CATEGORIES = {
         {
             "name": "Seagate Barracuda 4TB",
             "price": 599.00,
+            "filter_values": {
+                "Marca": "Seagate",
+                "Modelo": "Barracuda",
+                "Capacidade": "4TB SATA III",
+                "Garantia_meses": "24",
+            },
             "description": (
                 "## Seagate Barracuda 4TB\n\n"
                 "O **Seagate Barracuda 4TB** é a solução para quem precisa de "
@@ -641,6 +762,12 @@ CATEGORIES = {
         {
             "name": "Samsung 870 EVO 500GB SSD",
             "price": 299.00,
+            "filter_values": {
+                "Marca": "Samsung",
+                "Modelo": "870 EVO",
+                "Capacidade": "500GB SATA III",
+                "Garantia_meses": "60",
+            },
             "description": (
                 "## Samsung 870 EVO 500GB SSD\n\n"
                 "O **870 EVO** é o SSD SATA mais rápido do mundo, "
@@ -668,6 +795,12 @@ CATEGORIES = {
         {
             "name": "NZXT H510",
             "price": 499.00,
+            "filter_values": {
+                "Marca": "NZXT",
+                "Modelo": "H510",
+                "Capacidade": "Mid-Tower ATX",
+                "Garantia_meses": "24",
+            },
             "description": (
                 "## NZXT H510\n\n"
                 "O **NZXT H510** é um gabinete mid-tower minimalista e elegante, "
@@ -696,6 +829,12 @@ CATEGORIES = {
             "price": 599.00,
             "discount": 10,
             "featured": True,
+            "filter_values": {
+                "Marca": "Corsair",
+                "Modelo": "4000D Airflow",
+                "Capacidade": "Mid-Tower ATX",
+                "Garantia_meses": "24",
+            },
             "description": (
                 "## Corsair 4000D Airflow\n\n"
                 "O **Corsair 4000D Airflow** é um dos melhores gabinetes para refrigeração, "
@@ -721,6 +860,12 @@ CATEGORIES = {
         {
             "name": "Cooler Master Q300L",
             "price": 299.00,
+            "filter_values": {
+                "Marca": "Cooler Master",
+                "Modelo": "MasterBox Q300L",
+                "Capacidade": "Mini-Tower Micro-ATX",
+                "Garantia_meses": "24",
+            },
             "description": (
                 "## Cooler Master MasterBox Q300L\n\n"
                 "O **Q300L** é um gabinete Micro-ATX compacto e versátil, "
@@ -746,6 +891,12 @@ CATEGORIES = {
         {
             "name": "Lian Li O11",
             "price": 899.00,
+            "filter_values": {
+                "Marca": "Lian Li",
+                "Modelo": "O11 Dynamic",
+                "Capacidade": "Mid-Tower E-ATX",
+                "Garantia_meses": "24",
+            },
             "description": (
                 "## Lian Li O11 Dynamic\n\n"
                 "O **Lian Li O11 Dynamic** é o gabinete premium escolhido por entusiastas "
@@ -775,6 +926,12 @@ CATEGORIES = {
         {
             "name": "Redragon Wheel Jack",
             "price": 249.00,
+            "filter_values": {
+                "Marca": "Redragon",
+                "Modelo": "Wheel Jack",
+                "Capacidade": "Mid-Tower ATX",
+                "Garantia_meses": "12",
+            },
             "description": (
                 "## Redragon Wheel Jack\n\n"
                 "O **Redragon Wheel Jack** entrega visual gamer com RGB incluso "
@@ -803,6 +960,12 @@ CATEGORIES = {
             "name": "Logitech G Pro X",
             "price": 699.00,
             "featured": True,
+            "filter_values": {
+                "Marca": "Logitech",
+                "Modelo": "G Pro X",
+                "Conexão": "USB-C",
+                "RGB": "true",
+            },
             "description": (
                 "## Logitech G Pro X\n\n"
                 "O **G Pro X** é o teclado mecânico usado por jogadores profissionais de e-sports, "
@@ -828,6 +991,12 @@ CATEGORIES = {
         {
             "name": "Razer BlackWidow V4",
             "price": 899.00,
+            "filter_values": {
+                "Marca": "Razer",
+                "Modelo": "BlackWidow V4",
+                "Conexão": "USB",
+                "RGB": "true",
+            },
             "description": (
                 "## Razer BlackWidow V4\n\n"
                 "O **BlackWidow V4** é o teclado mecânico flagship da Razer, "
@@ -853,6 +1022,12 @@ CATEGORIES = {
         {
             "name": "HyperX Alloy Origins",
             "price": 549.00,
+            "filter_values": {
+                "Marca": "HyperX",
+                "Modelo": "Alloy Origins",
+                "Conexão": "USB-C",
+                "RGB": "true",
+            },
             "description": (
                 "## HyperX Alloy Origins\n\n"
                 "O **Alloy Origins** é um teclado mecânico compacto full-size com "
@@ -879,6 +1054,12 @@ CATEGORIES = {
             "name": "Redragon Kumara K552",
             "price": 199.00,
             "discount": 25,
+            "filter_values": {
+                "Marca": "Redragon",
+                "Modelo": "Kumara K552",
+                "Conexão": "USB",
+                "RGB": "false",
+            },
             "description": (
                 "## Redragon Kumara K552\n\n"
                 "O **Kumara K552** é o teclado mecânico mais vendido do Brasil — "
@@ -904,6 +1085,12 @@ CATEGORIES = {
         {
             "name": "Corsair K70 RGB",
             "price": 799.00,
+            "filter_values": {
+                "Marca": "Corsair",
+                "Modelo": "K70 RGB MK.2",
+                "Conexão": "USB",
+                "RGB": "true",
+            },
             "description": (
                 "## Corsair K70 RGB MK.2\n\n"
                 "O **Corsair K70 RGB** é um clássico entre os teclados mecânicos — "
@@ -934,6 +1121,12 @@ CATEGORIES = {
             "price": 199.00,
             "discount": 28,
             "featured": True,
+            "filter_values": {
+                "Marca": "Genérico",
+                "Modelo": "Combo Mouse + Mousepad XL",
+                "Conexão": "USB",
+                "RGB": "true",
+            },
             "description": (
                 "## Combo Setup Gamer\n\n"
                 "**28% OFF**: combo com mouse gamer + mousepad XL com bordas costuradas. "
@@ -949,6 +1142,12 @@ CATEGORIES = {
             "price": 299.00,
             "discount": 15,
             "featured": True,
+            "filter_values": {
+                "Marca": "Logitech",
+                "Modelo": "G502 Hero",
+                "Conexão": "USB",
+                "RGB": "true",
+            },
             "description": (
                 "## Logitech G502 Hero\n\n"
                 "O **G502 Hero** é o mouse gamer mais popular do mundo — "
@@ -975,6 +1174,12 @@ CATEGORIES = {
         {
             "name": "Razer DeathAdder V3",
             "price": 499.00,
+            "filter_values": {
+                "Marca": "Razer",
+                "Modelo": "DeathAdder V3",
+                "Conexão": "USB",
+                "RGB": "false",
+            },
             "description": (
                 "## Razer DeathAdder V3\n\n"
                 "O **DeathAdder V3** é a evolução do mouse ergonômico mais vendido da história, "
@@ -1000,6 +1205,12 @@ CATEGORIES = {
         {
             "name": "HyperX Pulsefire Haste",
             "price": 249.00,
+            "filter_values": {
+                "Marca": "HyperX",
+                "Modelo": "Pulsefire Haste",
+                "Conexão": "USB-C",
+                "RGB": "false",
+            },
             "description": (
                 "## HyperX Pulsefire Haste\n\n"
                 "O **Pulsefire Haste** é um mouse ultra leve de apenas **59g** "
@@ -1027,6 +1238,12 @@ CATEGORIES = {
             "name": "Redragon Cobra M711",
             "price": 99.00,
             "discount": 30,
+            "filter_values": {
+                "Marca": "Redragon",
+                "Modelo": "Cobra M711",
+                "Conexão": "USB",
+                "RGB": "true",
+            },
             "description": (
                 "## Redragon Cobra M711\n\n"
                 "O **Cobra M711** é o mouse gamer mais vendido do Brasil — "
@@ -1053,6 +1270,12 @@ CATEGORIES = {
         {
             "name": "SteelSeries Rival 3",
             "price": 199.00,
+            "filter_values": {
+                "Marca": "SteelSeries",
+                "Modelo": "Rival 3",
+                "Conexão": "USB",
+                "RGB": "true",
+            },
             "description": (
                 "## SteelSeries Rival 3\n\n"
                 "O **Rival 3** é um mouse leve e preciso da SteelSeries, "
@@ -1156,21 +1379,28 @@ def get_or_create_global_category(token, name, parent_id=None):
     return data["categoryId"]
 
 
-def create_product(token, store_slug, category_id, product):
+def create_product(token, store_slug, category_id, product, filter_id_map=None):
     print(f"   Criando produto '{product['name']}'...")
+    payload = {
+        "categoryId": category_id,
+        "name": product["name"],
+        "description": product["description"],
+        "price": product["price"],
+        "discount": product.get("discount", 0),
+        "frequency": 0,
+        "limit": 0,
+        "status": 1,  # Active
+        "featured": product.get("featured", False),
+    }
+    if filter_id_map and product.get("filter_values"):
+        payload["filterValues"] = [
+            {"filterId": filter_id_map[label], "value": str(value)}
+            for label, value in product["filter_values"].items()
+            if label in filter_id_map
+        ]
     resp = requests.post(
         f"{LOFN_URL}/product/{store_slug}/insert",
-        json={
-            "categoryId": category_id,
-            "name": product["name"],
-            "description": product["description"],
-            "price": product["price"],
-            "discount": product.get("discount", 0),
-            "frequency": 0,
-            "limit": 0,
-            "status": 1,  # Active
-            "featured": product.get("featured", False),
-        },
+        json=payload,
         headers={**COMMON_HEADERS, "Authorization": f"Bearer {token}"},
     )
     if not resp.ok:
@@ -1254,11 +1484,17 @@ def main():
             token, COMMON_HEADERS, LOFN_URL, spec
         )
 
+    filter_ids_by_type = {
+        type_name: get_filter_id_map(token, COMMON_HEADERS, LOFN_URL, type_id)
+        for type_name, type_id in type_id_by_name.items()
+    }
+
     for category_name, products in CATEGORIES.items():
         print(f"\n>> Subcategoria: {ROOT_CATEGORY}/{category_name}")
         category_id = get_or_create_global_category(token, category_name, parent_id=root_category_id)
 
         type_key = CATEGORY_TYPE_LINKS.get(category_name)
+        filter_id_map = filter_ids_by_type.get(type_key) if type_key else None
         if type_key and type_key in type_id_by_name:
             link_category_to_product_type(
                 token, COMMON_HEADERS, LOFN_URL,
@@ -1267,7 +1503,7 @@ def main():
 
         for product in products:
             product_id, product_slug = create_product(
-                token, store_slug, category_id, product
+                token, store_slug, category_id, product, filter_id_map
             )
 
             filepath = image_map[product["name"]]

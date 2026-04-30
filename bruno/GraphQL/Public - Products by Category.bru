@@ -14,11 +14,20 @@ body:graphql {
   query ($where: ProductFilterInput, $skip: Int, $take: Int) {
     products(where: $where, order: { name: ASC }, skip: $skip, take: $take) {
       items {
+        productId
         slug
         name
         price
         discount
         imageUrl
+        filterValues {
+          filterId
+          value
+          filter {
+            label
+            dataType
+          }
+        }
       }
       pageInfo { hasNextPage hasPreviousPage }
       totalCount
@@ -29,16 +38,14 @@ body:graphql {
 body:graphql:vars {
   {
     "where": {
-      "store": {
-        "slug": {
-          "eq": "loja-de-informatica"
-        }
-      },
-      "category": {
-        "slug": {
-          "eq": "produto"
-        }
-      }
+      "store": { "slug": { "eq": "circulou" } },
+      "category": { "slug": { "eq": "roupas/camisetas" } },
+      "price": { "gte": 20, "lte": 200 },
+      "discount": { "gt": 0 },
+      "and": [
+        { "filterValues": { "some": { "filterId": { "eq": 1 }, "value": { "eq": "M" } } } },
+        { "filterValues": { "some": { "filterId": { "eq": 2 }, "value": { "eq": "Preto" } } } }
+      ]
     },
     "skip": 0,
     "take": 50

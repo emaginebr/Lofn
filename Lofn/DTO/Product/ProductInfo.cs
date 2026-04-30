@@ -37,6 +37,9 @@ namespace Lofn.DTO.Product
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("updatedAt")]
         public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("imageUrl")]
+        public string ImageUrl { get; set; }
+
         [JsonPropertyName("images")]
         public IList<ProductImageInfo> Images { get; set; }
 

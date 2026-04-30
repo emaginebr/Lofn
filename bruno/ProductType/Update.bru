@@ -1,0 +1,23 @@
+meta {
+  name: Update
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/producttype/update
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "productTypeId": 1,
+    "name": "Calçado",
+    "description": "Calçados em geral — atualizado"
+  }
+}

@@ -11,17 +11,26 @@ post {
 }
 
 body:graphql {
-  {
-    products(skip: 0, take: 10) {
+  query ($where: ProductFilterInput, $skip: Int, $take: Int) {
+    products(where: $where, order: { name: ASC }, skip: $skip, take: $take) {
       items {
         productId
         name
         slug
         price
+        discount
         imageUrl
         description
         featured
         status
+        filterValues {
+          filterId
+          value
+          filter {
+            label
+            dataType
+          }
+        }
         productImages {
           imageId
           image
@@ -38,11 +47,16 @@ body:graphql {
           slug
         }
       }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-      }
+      pageInfo { hasNextPage hasPreviousPage }
       totalCount
     }
+  }
+}
+
+body:graphql:vars {
+  {
+    "where": null,
+    "skip": 0,
+    "take": 10
   }
 }

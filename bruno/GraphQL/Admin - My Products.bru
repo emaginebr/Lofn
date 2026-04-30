@@ -15,18 +15,27 @@ auth:bearer {
 }
 
 body:graphql {
-  {
-    myProducts(skip: 0, take: 10) {
+  query ($where: ProductFilterInput, $skip: Int, $take: Int) {
+    myProducts(where: $where, order: { name: ASC }, skip: $skip, take: $take) {
       items {
         productId
         name
         slug
         price
+        discount
         image
         imageUrl
         status
         featured
         description
+        filterValues {
+          filterId
+          value
+          filter {
+            label
+            dataType
+          }
+        }
         store {
           storeId
           name
@@ -42,11 +51,22 @@ body:graphql {
           sortOrder
         }
       }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-      }
+      pageInfo { hasNextPage hasPreviousPage }
       totalCount
     }
+  }
+}
+
+body:graphql:vars {
+  {
+    "where": {
+      "price": { "gte": 20, "lte": 500 },
+      "discount": { "gt": 0 },
+      "and": [
+        { "filterValues": { "some": { "filterId": { "eq": 1 }, "value": { "eq": "M" } } } }
+      ]
+    },
+    "skip": 0,
+    "take": 10
   }
 }

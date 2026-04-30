@@ -1,0 +1,19 @@
+meta {
+  name: DeleteGroup
+  type: http
+  seq: 11
+}
+
+delete {
+  url: {{baseUrl}}/producttype/customization/group/delete/:groupId
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  groupId: 1
+}

@@ -8,6 +8,7 @@ from openai import OpenAI
 from seed_product_types import (
     seed_product_type_tree,
     link_category_to_product_type,
+    get_filter_id_map,
 )
 
 load_dotenv(override=True)
@@ -92,6 +93,13 @@ CATEGORIES = {
             "price": 397.00,
             "discount": 40,
             "featured": True,
+            "filter_values": {
+                "Carga_horaria": "95",
+                "Nível": "Intermediário",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "Equipe DevOps",
+            },
             "description": (
                 "## Bundle DevOps Completo — Black Friday\n\n"
                 "**40% OFF**: pacote com 3 cursos completos para se tornar DevOps Engineer "
@@ -112,6 +120,13 @@ CATEGORIES = {
             "price": 497.00,
             "discount": 20,
             "featured": True,
+            "filter_values": {
+                "Carga_horaria": "120",
+                "Nível": "Iniciante",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "Rocketseat",
+            },
             "description": (
                 "## Full Stack com React e Node.js\n\n"
                 "Curso completo de desenvolvimento **Full Stack** moderno — do zero ao deploy. "
@@ -147,6 +162,13 @@ CATEGORIES = {
             "price": 297.00,
             "discount": 0,
             "featured": True,
+            "filter_values": {
+                "Carga_horaria": "80",
+                "Nível": "Iniciante",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "Geek University",
+            },
             "description": (
                 "## Python do Zero ao Profissional\n\n"
                 "Aprenda **Python** da forma certa — começando pelos fundamentos e avançando até "
@@ -182,6 +204,13 @@ CATEGORIES = {
             "price": 397.00,
             "discount": 15,
             "featured": False,
+            "filter_values": {
+                "Carga_horaria": "100",
+                "Nível": "Intermediário",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "Microsoft MVP",
+            },
             "description": (
                 "## C# e .NET para Desenvolvedores\n\n"
                 "Domine o ecossistema **Microsoft .NET** com C# — "
@@ -219,6 +248,13 @@ CATEGORIES = {
             "price": 447.00,
             "discount": 10,
             "featured": True,
+            "filter_values": {
+                "Carga_horaria": "90",
+                "Nível": "Intermediário",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "Data Science Academy",
+            },
             "description": (
                 "## Machine Learning com Python\n\n"
                 "Curso prático de **Machine Learning** — dos conceitos matemáticos à implementação "
@@ -254,6 +290,13 @@ CATEGORIES = {
             "price": 197.00,
             "discount": 25,
             "featured": False,
+            "filter_values": {
+                "Carga_horaria": "40",
+                "Nível": "Iniciante",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "AI Educators",
+            },
             "description": (
                 "## Prompt Engineering e ChatGPT\n\n"
                 "Domine a arte de criar **prompts eficazes** para ChatGPT, Claude e outros LLMs — "
@@ -289,6 +332,13 @@ CATEGORIES = {
             "price": 347.00,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Carga_horaria": "70",
+                "Nível": "Avançado",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "Vision AI Lab",
+            },
             "description": (
                 "## Computer Vision com OpenCV e YOLO\n\n"
                 "Aprenda **visão computacional** na prática — de processamento de imagens básico "
@@ -326,6 +376,13 @@ CATEGORIES = {
             "price": 247.00,
             "discount": 0,
             "featured": True,
+            "filter_values": {
+                "Carga_horaria": "60",
+                "Nível": "Iniciante",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "DBA Brasil",
+            },
             "description": (
                 "## PostgreSQL Completo\n\n"
                 "Domine o **PostgreSQL** do básico ao avançado — modelagem, queries complexas, "
@@ -361,6 +418,13 @@ CATEGORIES = {
             "price": 197.00,
             "discount": 15,
             "featured": False,
+            "filter_values": {
+                "Carga_horaria": "45",
+                "Nível": "Iniciante",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "NoSQL Masters",
+            },
             "description": (
                 "## MongoDB e NoSQL na Prática\n\n"
                 "Aprenda **MongoDB** e o paradigma **NoSQL** — modelagem de documentos, "
@@ -396,6 +460,13 @@ CATEGORIES = {
             "price": 197.00,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Carga_horaria": "35",
+                "Nível": "Intermediário",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "Cloud Native School",
+            },
             "description": (
                 "## Redis, Cache e Mensageria\n\n"
                 "Domine **Redis** como cache, session store, message broker e "
@@ -433,6 +504,13 @@ CATEGORIES = {
             "price": 347.00,
             "discount": 10,
             "featured": True,
+            "filter_values": {
+                "Carga_horaria": "65",
+                "Nível": "Iniciante",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "Origamid",
+            },
             "description": (
                 "## UI e UX Design com Figma\n\n"
                 "Curso completo de **UI/UX Design** usando **Figma** — da pesquisa com usuários "
@@ -468,6 +546,13 @@ CATEGORIES = {
             "price": 197.00,
             "discount": 20,
             "featured": False,
+            "filter_values": {
+                "Carga_horaria": "40",
+                "Nível": "Iniciante",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "Adobe Certified",
+            },
             "description": (
                 "## Photoshop para Iniciantes\n\n"
                 "Aprenda **Adobe Photoshop** do zero — edição de fotos, manipulação de imagens, "
@@ -503,6 +588,13 @@ CATEGORIES = {
             "price": 397.00,
             "discount": 0,
             "featured": False,
+            "filter_values": {
+                "Carga_horaria": "75",
+                "Nível": "Intermediário",
+                "Idioma": "Português",
+                "Certificado": "true",
+                "Instrutor": "Motion Pro Studio",
+            },
             "description": (
                 "## Motion Design com After Effects\n\n"
                 "Domine **animação e motion graphics** com **Adobe After Effects** — "
@@ -613,22 +705,29 @@ def get_or_create_global_category(token, name, parent_id=None):
     return data["categoryId"]
 
 
-def create_product(token, store_slug, category_id, product):
+def create_product(token, store_slug, category_id, product, filter_id_map=None):
     print(f"   Criando produto '{product['name']}'...")
+    payload = {
+        "categoryId": category_id,
+        "name": product["name"],
+        "description": product["description"],
+        "price": product["price"],
+        "discount": product.get("discount", 0),
+        "frequency": 0,
+        "limit": 0,
+        "status": 1,  # Active
+        "productType": PRODUCT_TYPE_INFO,
+        "featured": product.get("featured", False),
+    }
+    if filter_id_map and product.get("filter_values"):
+        payload["filterValues"] = [
+            {"filterId": filter_id_map[label], "value": str(value)}
+            for label, value in product["filter_values"].items()
+            if label in filter_id_map
+        ]
     resp = requests.post(
         f"{LOFN_URL}/product/{store_slug}/insert",
-        json={
-            "categoryId": category_id,
-            "name": product["name"],
-            "description": product["description"],
-            "price": product["price"],
-            "discount": product.get("discount", 0),
-            "frequency": 0,
-            "limit": 0,
-            "status": 1,  # Active
-            "productType": PRODUCT_TYPE_INFO,
-            "featured": product.get("featured", False),
-        },
+        json=payload,
         headers={**COMMON_HEADERS, "Authorization": f"Bearer {token}"},
     )
     if not resp.ok:
@@ -713,11 +812,17 @@ def main():
             token, COMMON_HEADERS, LOFN_URL, spec
         )
 
+    filter_ids_by_type = {
+        type_name: get_filter_id_map(token, COMMON_HEADERS, LOFN_URL, type_id)
+        for type_name, type_id in type_id_by_name.items()
+    }
+
     for category_name, products in CATEGORIES.items():
         print(f"\n>> Subcategoria: {ROOT_CATEGORY}/{category_name}")
         category_id = get_or_create_global_category(token, category_name, parent_id=root_category_id)
 
         type_key = CATEGORY_TYPE_LINKS.get(category_name)
+        filter_id_map = filter_ids_by_type.get(type_key) if type_key else None
         if type_key and type_key in type_id_by_name:
             link_category_to_product_type(
                 token, COMMON_HEADERS, LOFN_URL,
@@ -726,7 +831,7 @@ def main():
 
         for product in products:
             product_id, product_slug = create_product(
-                token, store_slug, category_id, product
+                token, store_slug, category_id, product, filter_id_map
             )
 
             filepath = image_map[product["name"]]
